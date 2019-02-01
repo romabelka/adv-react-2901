@@ -70,3 +70,11 @@ export function signUp(email, password) {
         })
     }
 }
+
+/**
+ * Init
+ **/
+
+firebase.auth().onAuthStateChanged((user) => {
+    console.log('--- user', user)
+})
