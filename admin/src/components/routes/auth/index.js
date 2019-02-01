@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import {Route, NavLink} from 'react-router-dom'
+import {connect} from 'react-redux'
 import SignInForm from '../../auth/sign-in-form'
 import SignUpForm from '../../auth/sign-up-form'
+import { signIn, signUp } from '../../../ducks/auth'
 
 class AuthPage extends Component {
     static propTypes = {
@@ -28,8 +30,8 @@ class AuthPage extends Component {
     getSignInForm = () => <SignInForm onSubmit = {this.handleSignIn}/>
     getSignUpForm = () => <SignUpForm onSubmit = {this.handleSignUp}/>
 
-    handleSignIn = ({ email, password }) => console.log('---', 'sign in', email, password)
-    handleSignUp = () => console.log('---', 'sign up')
+    handleSignIn = ({ email, password }) => this.props.signIn(email, password)
+    handleSignUp = ({ email, password }) => this.props.signUp(email, password)
 }
 
-export default AuthPage
+export default connect(null, { signIn, signUp })(AuthPage)
