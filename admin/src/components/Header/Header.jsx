@@ -27,6 +27,9 @@ class Header extends Component {
             <NavLink to="/admin" activeStyle={{ color: 'red'}}>admin</NavLink>
           </li>
           <li>
+            <NavLink to="/add-person" activeStyle={{ color: 'red'}}>add person</NavLink>
+          </li>
+          <li>
             <button onClick={signOut}> Sign out </button>
           </li>
         </ul>

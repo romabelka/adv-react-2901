@@ -1,4 +1,4 @@
-import {Record} from 'immutable'
+import { Record } from 'immutable'
 import firebase from 'firebase/app'
 import { createSelector } from 'reselect';
 
