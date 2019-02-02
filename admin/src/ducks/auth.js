@@ -85,6 +85,20 @@ export function signUp(email, password) {
     }
 }
 
+export function signOut() {
+    return async (dispatch) => {
+        await firebase.auth().signOut()
+          .then(
+            () => localStorage.removeItem('token'),
+            error => console.log(error),
+          )
+
+        dispatch({
+            type: SIGN_OUT_USER
+        })
+    }
+}
+
 export function verifyAuth() {
     return (dispatch) => {
         firebase.auth().onAuthStateChanged(user => {
