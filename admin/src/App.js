@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 
-import Main from "./components/Main/Main";
-import Header from "./components/Header/Header";
+import Main from "./components/Main";
+import Header from "./components/Header";
 
 class App extends Component {
     static propTypes = {
