@@ -95,6 +95,6 @@ export function signOut() {
  * Init
  **/
 
-firebase.auth().onAuthStateChanged((user) => {
+firebase.auth().onAuthStateChanged(user => {
   console.log('firebase.auth', user)
 });

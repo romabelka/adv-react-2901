@@ -5,7 +5,7 @@ import thunk from 'redux-thunk'
 import reducer from './reducer'
 import history from '../history'
 
-const enhancer = applyMiddleware(thunk, routerMiddleware(history));
-// const enhancer = applyMiddleware(thunk, routerMiddleware(history), logger);
+// const enhancer = applyMiddleware(thunk, routerMiddleware(history));
+const enhancer = applyMiddleware(thunk, routerMiddleware(history), logger);
 
 export default createStore(reducer, enhancer)
