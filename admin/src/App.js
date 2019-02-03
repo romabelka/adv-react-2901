@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
-import { Route, NavLink } from 'react-router-dom'
+import { Route, Switch, NavLink, Redirect } from 'react-router-dom'
+import { connect } from 'react-redux'
 import AuthPage from './components/routes/auth'
 import AdminPage from './components/routes/admin'
 
 class App extends Component {
-    static propTypes = {
-
-    }
 
     render() {
+        const { user } = this.props;
+
         return (
             <div>
                 <nav>
@@ -16,18 +16,27 @@ class App extends Component {
                         <li>
                             <NavLink to="/auth" activeStyle={{ color: 'red'}}>auth</NavLink>
                         </li>
-                        <li>
+                        {user && <li>
                             <NavLink to="/admin" activeStyle={{ color: 'red'}}>admin</NavLink>
-                        </li>
+                        </li>}
                     </ul>
                 </nav>
                 <section>
-                    <Route path="/auth" component={AuthPage}/>
-                    <Route path="/admin" component={AdminPage}/>
+                    <Switch>
+                        <Route path="/auth" component={AuthPage} />
+                        {user
+                         ? <Route path="/admin" component={AdminPage} />
+                         : <Redirect from="/admin" to="/auth" />
+                        }
+                    </Switch>
                 </section>
             </div>
         )
     }
 }
 
-export default App
+const mapStateToProps = state => ({
+    user: state.auth.user,
+})
+
+export default connect(mapStateToProps)(App)
