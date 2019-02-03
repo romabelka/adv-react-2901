@@ -31,4 +31,4 @@ const validate = ({firstName, lastName, email}) => {
     return errors
 }
 
-export default reduxForm({ form: 'add-participant' })(AddParticipantForm)
+export default reduxForm({ form: 'add-participant', validate })(AddParticipantForm)

@@ -1,9 +1,13 @@
 import React, { Component } from 'react'
-import {Route, NavLink} from 'react-router-dom'
+import {Route, NavLink, Redirect} from 'react-router-dom'
 import ParticipantsPage from '../participants'
+import {connect} from 'react-redux'
+import {getUser} from '../../../ducks/auth'
 
 class AdminPage extends Component {
     render() {
+        if (!this.props.user)
+            return <Redirect to="/auth"/>
         return (
             <div>
                 <h1>Admin</h1>
@@ -16,4 +20,8 @@ class AdminPage extends Component {
     }
 }
 
-export default AdminPage
+const mapStateToProps = state => ({
+    user: getUser(state)
+})
+
+export default connect(mapStateToProps)(AdminPage)

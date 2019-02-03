@@ -1,6 +1,7 @@
 import { Record, List } from "immutable";
 import { appName } from "../config";
 import uuid from "uuid/v4";
+import {reset} from 'redux-form';
 
 /**
  * Constants
@@ -57,5 +58,6 @@ export function addParticipant({ firstName, lastName, email }) {
       type: ADD_PARTICIPANT_SUCCESS,
       payload: user
     });
+    dispatch(reset('add-participant'));
   };
 }

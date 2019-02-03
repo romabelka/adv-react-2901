@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import {Route, NavLink} from 'react-router-dom'
+import {Route, NavLink, Redirect} from 'react-router-dom'
 import {connect} from 'react-redux'
 import SignInForm from '../../auth/sign-in-form'
 import SignUpForm from '../../auth/sign-up-form'
 import { signIn, signUp } from '../../../ducks/auth'
+import {getUser} from '../../../ducks/auth'
 
 class AuthPage extends Component {
     static propTypes = {
@@ -11,6 +12,8 @@ class AuthPage extends Component {
     }
 
     render() {
+        if (this.props.user)
+            return <Redirect to="/admin"/>
         return (
             <div>
                 <h1>Auth Page</h1>
@@ -33,5 +36,8 @@ class AuthPage extends Component {
     handleSignIn = ({ email, password }) => this.props.signIn(email, password)
     handleSignUp = ({ email, password }) => this.props.signUp(email, password)
 }
+const mapStateToProps = state => ({
+    user: getUser(state)
+})
 
-export default connect(null, { signIn, signUp })(AuthPage)
+export default connect(mapStateToProps, { signIn, signUp })(AuthPage)
