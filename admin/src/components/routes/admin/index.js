@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import UsersPage from "../users";
+import React, { Component } from 'react'
+import UsersPage from '../users'
 
 class AdminPage extends Component {
-  static propTypes = {};
+  static propTypes = {}
 
   render() {
     return (
@@ -10,8 +10,8 @@ class AdminPage extends Component {
         <h1>Admin Panel</h1>
         <UsersPage />
       </div>
-    );
+    )
   }
 }
 
-export default AdminPage;
+export default AdminPage

@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import UserList from "../../users/user-list";
-import UserForm from "../../users/user-form";
+import React, { Component } from 'react'
+import UserList from '../../users/user-list'
+import UserForm from '../../users/user-form'
 
 class Users extends Component {
   render() {
@@ -9,8 +9,8 @@ class Users extends Component {
         <UserForm />
         <UserList />
       </>
-    );
+    )
   }
 }
 
-export default Users;
+export default Users
