@@ -5,7 +5,6 @@ import logger from 'redux-logger'
 import thunk from 'redux-thunk'
 import reducer from './reducer'
 import history from '../history'
-import { setUserToState } from '../ducks/auth'
 
 const enhancer = applyMiddleware(thunk, routerMiddleware(history), logger)
 
