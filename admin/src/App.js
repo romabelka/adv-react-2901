@@ -32,7 +32,7 @@ class App extends Component {
         </nav>
         <section>
           <Route path="/auth" component={AuthPage} />
-          <PrivateRoute path="/admin" component={AdminPage} />
+          <Route path="/admin" component={AdminPage} />
         </section>
       </div>
     )

@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import { reduxForm, Field } from 'redux-form'
+import propTypes from 'prop-types'
 import validator from 'email-validator'
 import ErrorField from '../common/error-field'
 
 class SignUpForm extends Component {
-  static propTypes = {}
+  static propTypes = {
+    handleSubmit: propTypes.func.isRequired
+  }
 
   render() {
     return (
