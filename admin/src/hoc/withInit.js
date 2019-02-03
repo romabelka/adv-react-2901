@@ -23,6 +23,4 @@ class Loading extends Component {
   }
 }
 
-const App = connect(state => ({user: state.auth.user}), {initUser})(Loading);
-
-export default Component => () => <App Component={Component} />;
+export default Component => connect(state => ({user: state.auth.user}), {initUser, Component})(Loading);
