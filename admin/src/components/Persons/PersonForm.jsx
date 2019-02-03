@@ -1,5 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import { reduxForm, Field } from 'redux-form'
+import emailValidator from "email-validator";
+
 import ErrorField from "../common/error-field";
 
 class PersonForm extends Component {
@@ -18,6 +20,19 @@ class PersonForm extends Component {
   }
 }
 
+const validate = ({ email, firstName, lastName }) => {
+  const errors = {};
+
+  if (!email) errors.email = "Обязательное поле";
+  else if (!emailValidator.validate(email)) errors.email = "Некорректный email";
+
+  if (!firstName) errors.firstName = "Обязательное поле";
+  if (!lastName) errors.lastName = "Обязательное поле";
+
+  return errors;
+};
+
 export default reduxForm({
-  form: 'add-person'
+  form: 'add-persons',
+  validate,
 })(PersonForm)
