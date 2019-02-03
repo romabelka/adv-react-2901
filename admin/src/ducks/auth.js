@@ -96,13 +96,14 @@ export function signOut() {
   }
 }
 
-export function initUser() {
+export function initUser(callback) {
   return dispatch => {
     firebase.auth().onAuthStateChanged(user => {
       dispatch({
         type: INIT_USER_SUCCESS,
         payload: {user},
       });
+      if (callback) callback();
     });
   }
 }

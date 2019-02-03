@@ -1,19 +1,14 @@
 import React, {Component} from 'react';
 import {Route, NavLink, Switch} from 'react-router-dom';
 import {connect} from 'react-redux'
+import withInit from './hoc/withInit';
 import AuthPage from './components/routes/auth';
 import Header from './components/Header';
 import AdminPage from './components/routes/admin';
 import ListUsers from './components/routes/ListUsers';
 import ProtectedRoute from './components/routes/ProtectedRoute';
-import {initUser} from './ducks/auth'
 
 class App extends Component {
-
-  componentDidMount() {
-    this.props.initUser();
-  }
-
   render() {
     return (
       <div>
@@ -43,4 +38,4 @@ class App extends Component {
   }
 }
 
-export default connect(null, {initUser})(App)
+export default withInit(App)
