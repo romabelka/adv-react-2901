@@ -3,17 +3,20 @@ import {connect} from 'react-redux'
 import FormListUsers from '../ListUsers';
 import {addUser} from "../../ducks/list-users";
 
-const ListUsers = () => (
+const ListUsers = ({users, addUser}) => (
   <div>
-    {this.props.users.map(item => (
-      <div>
+    <hr />
+    <ul>
+    {users.map(item => (
+      <li key={`${item.email}_${item.name}`}>
         name:
         <p>{item.name}</p>
         email:
         <p>{item.email}</p>
-      </div>
+      </li>
     ))}
-    <FormListUsers onSubmit={this.props.addUser}/>
+    </ul>
+    <FormListUsers onSubmit={addUser}/>
   </div>
 );
 

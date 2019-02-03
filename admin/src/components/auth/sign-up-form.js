@@ -3,10 +3,10 @@ import {reduxForm, Field} from 'redux-form'
 import validator from 'email-validator'
 import ErrorField from "../common/error-field";
 
-const SignUpForm = () => (
+const SignUpForm = ({handleSubmit}) => (
   <div>
     <h3>Sign Up</h3>
-    <form onSubmit={this.props.handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <Field name="email" component={ErrorField} label="Email"/>
       <Field name="password" type="password" component={ErrorField} label="Password"/>
       <button type="submit">Sign Up</button>

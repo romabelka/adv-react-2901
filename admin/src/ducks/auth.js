@@ -17,6 +17,9 @@ export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`;
 export const SIGN_OUT_START = `${prefix}/SIGN_OUT_START`;
 export const SIGN_OUT_SUCCESS = `${prefix}/SIGN_OUT_SUCCESS`;
 
+export const INIT_USER_START = `${prefix}/INIT_USER_START`;
+export const INIT_USER_SUCCESS = `${prefix}/INIT_USER_SUCCESS`;
+
 /**
  * Reducer
  * */
@@ -31,6 +34,8 @@ export default function reducer(state = new ReducerRecord(), action) {
     case SIGN_IN_SUCCESS:
     case SIGN_UP_SUCCESS:
     case SIGN_OUT_SUCCESS:
+    case INIT_USER_START:
+    case INIT_USER_SUCCESS:
       return state.set('user', payload.user);
 
     default:
@@ -91,10 +96,13 @@ export function signOut() {
   }
 }
 
-/**
- * Init
- **/
-
-firebase.auth().onAuthStateChanged(user => {
-  console.log('firebase.auth', user)
-});
+export function initUser() {
+  return dispatch => {
+    firebase.auth().onAuthStateChanged(user => {
+      dispatch({
+        type: INIT_USER_SUCCESS,
+        payload: {user},
+      });
+    });
+  }
+}

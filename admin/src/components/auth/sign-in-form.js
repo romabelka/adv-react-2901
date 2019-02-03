@@ -1,10 +1,10 @@
 import React from 'react'
 import {reduxForm, Field} from 'redux-form'
 
-const SignInForm = () => (
+const SignInForm = ({handleSubmit}) => (
   <div>
     <h3>Sign In</h3>
-    <form onSubmit={this.props.handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <div>
         <div>
           email:
