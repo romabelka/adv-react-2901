@@ -51,7 +51,7 @@ export function signIn(email, password) {
 
         dispatch({
             type: SIGN_IN_SUCCESS,
-            payload: { user }
+            payload: {user}
         })
     }
 }
@@ -66,15 +66,24 @@ export function signUp(email, password) {
 
         dispatch({
             type: SIGN_UP_SUCCESS,
-            payload: { user }
+            payload: {user}
         })
     }
 }
 
-/**
- * Init
- **/
+export function checkAuth() {
+    return async (dispatch) => {
+        dispatch({
+            type: SIGN_IN_START
+        });
 
-firebase.auth().onAuthStateChanged((user) => {
-    console.log('--- user', user)
-})
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                dispatch({
+                    type: SIGN_IN_SUCCESS,
+                    payload: {user}
+                });
+            }
+        })
+    }
+}
