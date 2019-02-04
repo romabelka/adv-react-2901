@@ -1,6 +1,6 @@
-import {Record} from 'immutable'
+import { Record } from 'immutable'
 import firebase from 'firebase/app'
-import {appName} from '../config'
+import { appName } from '../config'
 
 /**
  * Constants
@@ -12,6 +12,7 @@ export const SIGN_IN_START = `${prefix}/SIGN_IN_START`
 export const SIGN_IN_SUCCESS = `${prefix}/SIGN_IN_SUCCESS`
 
 export const SIGN_UP_START = `${prefix}/SIGN_UP_START`
+export const CONTINUE_SESSION = `${prefix}/CONTINUE_SESSION`
 export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`
 
 /**
@@ -27,7 +28,15 @@ export default function reducer(state = new ReducerRecord(), action) {
     switch (type) {
         case SIGN_IN_SUCCESS:
         case SIGN_UP_SUCCESS:
-            return state.set('user', payload.user)
+        case START_SESSION:
+            localStorage.setItem('token', payload.user.email)
+            const obj = {...state, user: payload.user};
+            return obj
+        case CONTINUE_SESSION:
+            return {...state, user: true}
+        case END_SESSION:
+            localStorage.removeItem(`token`)
+            return {...state, user: ''}
         default:
             return state
     }
@@ -47,11 +56,12 @@ export function signIn(email, password) {
             type: SIGN_IN_START
         })
 
-        const user = await firebase.auth().signInWithEmailAndPassword(email, password)
+        const user = await firebase.auth().signInWithEmailAndPassword(email, password);
+        console.log('user = ', user)
 
         dispatch({
             type: SIGN_IN_SUCCESS,
-            payload: { user }
+            payload: {user}
         })
     }
 }
@@ -63,18 +73,40 @@ export function signUp(email, password) {
         })
 
         const user = await firebase.auth().createUserWithEmailAndPassword(email, password)
+        console.log('user signUP = ', user);
 
         dispatch({
             type: SIGN_UP_SUCCESS,
-            payload: { user }
+            payload: {user}
         })
     }
 }
 
-/**
- * Init
- **/
+export const START_SESSION = `${prefix}/START_SESSION`
+export const END_SESSION = `${prefix}/END_SESSION`
 
-firebase.auth().onAuthStateChanged((user) => {
-    console.log('--- user', user)
-})
+export const checkAuth = () => {
+    return (dispatch) => {
+        firebase.auth().onAuthStateChanged((user) => {
+            console.log('--- user', user)
+            if (user) {
+                dispatch({
+                    type: START_SESSION,
+                    payload: {user}
+                })
+            } else if (localStorage.getItem('token') !== undefined) {
+                const user = localStorage.getItem('token');
+                console.log(user);
+                dispatch({
+                    type: CONTINUE_SESSION,
+                    payload: {user}
+                })
+            } else {
+                dispatch({
+                    type: END_SESSION
+                });
+            }
+        })
+
+    }
+}
