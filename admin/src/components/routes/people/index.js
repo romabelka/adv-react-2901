@@ -4,11 +4,7 @@ import AddForm from '../../people/add-person-form'
 import People from '../../../components/people/people-list'
 import { addPerson, peopleListSelector } from '../../../ducks/people'
 
-class AuthPage extends Component {
-  static propTypes = {
-
-  }
-
+class PeoplePage extends Component {
   render() {
     return (
       <div>
@@ -19,7 +15,6 @@ class AuthPage extends Component {
     )
   }
 
-
   handleAddPerson = (person) => this.props.addPerson(person)
 }
 
@@ -27,4 +22,4 @@ export default connect((state) => {
   return {
     people: peopleListSelector(state)
   }
-}, { addPerson })(AuthPage)
+}, { addPerson })(PeoplePage)
