@@ -53,11 +53,12 @@ export function signIn(email, password) {
             type: SIGN_IN_START
         })
 
-        const user = await firebase.auth().signInWithEmailAndPassword(email, password)
+        const user = await firebase.auth().signInWithEmailAndPassword(email, password);
+        console.log('user = ', user)
 
         dispatch({
             type: SIGN_IN_SUCCESS,
-            payload: { user }
+            payload: {user}
         })
     }
 }
@@ -69,16 +70,7 @@ export function signUp(email, password) {
         })
 
         const user = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        console.log('user signUP = ',user);
-
-        user.getIdToken().then(idToken => {
-            // Session login endpoint is queried and the session cookie is set.
-            // CSRF protection should be taken into account.
-            // ...
-            console.log('idToken = ', idToken);
-            // const csrfToken = getCookie('csrfToken')
-            // return postIdTokenToSessionLogin('/sessionLogin', idToken, csrfToken);
-        });
+        console.log('user signUP = ', user);
 
         dispatch({
             type: SIGN_UP_SUCCESS,

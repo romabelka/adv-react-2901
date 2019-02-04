@@ -5,14 +5,23 @@ import AdminPage from './components/Pages/admin'
 import UserList from './components/Pages/UserList'
 import { connect } from "react-redux";
 import AuthRoute from "./components/routes/AuthRoute";
+import { checkAuth } from "./ducks/auth";
 
 class App extends Component {
     static propTypes = {}
 
+    componentDidMount() {
+        checkAuth();
+    }
+
+
+    getUser() {
+        const result = Boolean(this.props.user) ? '' : '( Private Route )';
+        return result;
+    }
+
     render() {
-        const {user} = this.props;
-        const closed = user === undefined ? '( Private Route )' : '';
-        console.log('user = ', user);
+
         return (
             <div>
                 <nav>
@@ -21,10 +30,10 @@ class App extends Component {
                             <NavLink to="/auth" activeStyle={{color: 'red'}}>auth</NavLink>
                         </li>
                         <li>
-                            <NavLink to="/admin" activeStyle={{color: 'red'}}>admin {closed}</NavLink>
+                            <NavLink to="/admin" activeStyle={{color: 'red'}}>admin {this.getUser()}</NavLink>
                         </li>
                         <li>
-                            <NavLink to="/user-list" activeStyle={{color: 'red'}}>User {closed}</NavLink>
+                            <NavLink to="/user-list" activeStyle={{color: 'red'}}>User list{this.getUser()}</NavLink>
                         </li>
                     </ul>
                 </nav>
@@ -41,9 +50,9 @@ class App extends Component {
 const mapStateToProps = state => {
     console.log('state = ', state.auth)
     return {
-        user: state.auth.user
+        user: state.auth.user,
     }
 };
 
-export default connect(mapStateToProps)(App)
+export default connect(mapStateToProps, {checkAuth})(App)
 

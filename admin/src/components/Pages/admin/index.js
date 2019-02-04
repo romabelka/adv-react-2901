@@ -18,7 +18,7 @@ class AdminPage extends Component {
 
 const mapStateToProps = state => {
     return {
-        user: state.auth.userAuth
+        user: Boolean(state.auth.user)
     }
 };
 export default connect(mapStateToProps, {})(AdminPage)
