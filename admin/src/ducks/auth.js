@@ -14,6 +14,8 @@ export const SIGN_IN_SUCCESS = `${prefix}/SIGN_IN_SUCCESS`
 export const SIGN_UP_START = `${prefix}/SIGN_UP_START`
 export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`
 
+export const AUTH_USER = `${prefix}/AUTH_USER`
+
 /**
  * Reducer
  * */
@@ -25,8 +27,7 @@ export default function reducer(state = new ReducerRecord(), action) {
     const {type, payload} = action
 
     switch (type) {
-        case SIGN_IN_SUCCESS:
-        case SIGN_UP_SUCCESS:
+        case AUTH_USER:
             return state.set('user', payload.user)
         default:
             return state
@@ -36,6 +37,8 @@ export default function reducer(state = new ReducerRecord(), action) {
 /**
  * Selectors
  * */
+
+export const userSelector = (state) => state.auth.user
 
 /**
  * Action Creators
@@ -50,9 +53,9 @@ export function signIn(email, password) {
         const user = await firebase.auth().signInWithEmailAndPassword(email, password)
 
         dispatch({
-            type: SIGN_IN_SUCCESS,
-            payload: { user }
+            type: SIGN_IN_SUCCESS
         })
+        dispatch(authUser(user))
     }
 }
 
@@ -65,16 +68,27 @@ export function signUp(email, password) {
         const user = await firebase.auth().createUserWithEmailAndPassword(email, password)
 
         dispatch({
-            type: SIGN_UP_SUCCESS,
+            type: SIGN_UP_SUCCESS
+        })
+        dispatch(authUser(user))
+    }
+}
+
+export function authUser(user) {
+    return (dispatch) => {
+        dispatch({
+            type: AUTH_USER,
             payload: { user }
         })
     }
 }
 
-/**
- * Init
- **/
-
-firebase.auth().onAuthStateChanged((user) => {
-    console.log('--- user', user)
-})
+export function verifyAuth() {
+    return (dispatch) => {
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                dispatch(authUser(user))
+            }
+        })
+    }
+}
