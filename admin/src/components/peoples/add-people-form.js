@@ -4,6 +4,8 @@ import ErrorField from '../common/error-field'
 import validator from 'email-validator'
 
 class AddPeopleForm extends Component {
+
+
   render() {
     return (
       <div>

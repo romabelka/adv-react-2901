@@ -78,7 +78,6 @@ export function signUp(email, password) {
 export function initAuth() {
     return (dispatch) => {
         firebase.auth().onAuthStateChanged((user) => {
-            console.log(user);
             if (user) {
                 dispatch({
                     type: SIGN_IN_SUCCESS,

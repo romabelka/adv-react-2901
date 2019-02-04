@@ -32,11 +32,10 @@ class App extends Component {
                          ? <Route path="/admin" component={AdminPage} />
                          : <Redirect from="/admin" to="/auth" />
                         }
-                        <Route path="/add-people" component={AddPeople} />
-                        {/*{user*/}
-                         {/*? <Route path="/add-people" component={AddPeople} />*/}
-                         {/*: <Redirect from="/add-people" to="/auth" />*/}
-                        {/*}*/}
+                        {user
+                         ? <Route path="/add-people" component={AddPeople} />
+                         : <Redirect from="/add-people" to="/auth" />
+                        }
                     </Switch>
                 </section>
             </div>

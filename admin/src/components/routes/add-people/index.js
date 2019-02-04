@@ -10,7 +10,6 @@ class AddPeople extends Component {
   render() {
     return (
       <Fragment>
-        <h1>Add People</h1>
         <AddPeopleForm onSubmit = {this.handleAddPeopleForm} />
         <ListPeople />
       </Fragment>

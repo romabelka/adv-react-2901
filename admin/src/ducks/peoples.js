@@ -1,4 +1,5 @@
 import { Record } from 'immutable';
+import { reset } from 'redux-form'
 import { createSelector } from 'reselect'
 import { appName } from '../config';
 import { arrToMap } from './utils';
@@ -39,7 +40,11 @@ export default function reducer(state = new PeopleListRecord(), action) {
 /**
  * Selectors
  * */
+export const peoplesSelector = state => state.peoples
 
+export const peopleListSelector = createSelector(peoplesSelector, state =>
+  state.peopleList.valueSeq().toArray()
+)
 
 /**
  * Action Creators
@@ -50,5 +55,7 @@ export function addPeople(fname, lname, email) {
       type: ADD_PEOPLE,
       payload: { id: Date.now(), fname, lname, email },
     })
+
+    dispatch(reset('add-people'))
   }
 }
