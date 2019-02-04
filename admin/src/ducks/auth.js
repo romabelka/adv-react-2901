@@ -16,8 +16,6 @@ export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`
 
 export const AUTH_USER = `${prefix}/AUTH_USER`
 
-export const userSelector = (state) => state.auth.user
-
 /**
  * Reducer
  * */
@@ -39,6 +37,8 @@ export default function reducer(state = new ReducerRecord(), action) {
 /**
  * Selectors
  * */
+
+export const userSelector = (state) => state.auth.user
 
 /**
  * Action Creators
