@@ -21,7 +21,6 @@ export default function userReducer(state = new ReducerRecord(), action) {
     const {type, payload} = action
     switch (type) {
         case CREATE_USER_SUCCESS:
-            console.log('payload = =', payload)
             return state.setIn(['users', payload.id], new UserRecord(payload))
         default:
             return state

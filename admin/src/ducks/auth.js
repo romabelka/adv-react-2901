@@ -12,6 +12,7 @@ export const SIGN_IN_START = `${prefix}/SIGN_IN_START`
 export const SIGN_IN_SUCCESS = `${prefix}/SIGN_IN_SUCCESS`
 
 export const SIGN_UP_START = `${prefix}/SIGN_UP_START`
+export const CONTINUE_SESSION = `${prefix}/CONTINUE_SESSION`
 export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`
 
 /**
@@ -31,6 +32,8 @@ export default function reducer(state = new ReducerRecord(), action) {
             localStorage.setItem('token', payload.user.email)
             const obj = {...state, user: payload.user};
             return obj
+        case CONTINUE_SESSION:
+            return {...state, user: true}
         case END_SESSION:
             localStorage.removeItem(`token`)
             return {...state, user: ''}
@@ -69,7 +72,7 @@ export function signUp(email, password) {
             type: SIGN_UP_START
         })
 
-        const user = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        const user = await firebase.auth().createUserWithEmailAndPassword(email, password)
         console.log('user signUP = ', user);
 
         dispatch({
@@ -89,6 +92,13 @@ export const checkAuth = () => {
             if (user) {
                 dispatch({
                     type: START_SESSION,
+                    payload: {user}
+                })
+            } else if (localStorage.getItem('token') !== undefined) {
+                const user = localStorage.getItem('token');
+                console.log(user);
+                dispatch({
+                    type: CONTINUE_SESSION,
                     payload: {user}
                 })
             } else {
