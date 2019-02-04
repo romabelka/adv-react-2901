@@ -24,6 +24,5 @@ class UserList extends Component {
 }
 
 export default connect(state => ({
-  users: usersSelector(state),
-  validate() {}
+  users: usersSelector(state)
 }))(UserList)

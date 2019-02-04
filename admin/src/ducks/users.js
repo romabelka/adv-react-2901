@@ -54,7 +54,7 @@ export const usersSelector = createSelector(
  **/
 
 export function createUser({ email, firstName, lastName }) {
-  return async dispatch => {
+  return dispatch => {
     dispatch({
       type: CREATE_USER_SUCCESS,
       payload: {
