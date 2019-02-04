@@ -1,12 +1,10 @@
-import React, { Component } from 'react'
-import { Route, NavLink } from 'react-router-dom'
+import React, {Component} from 'react'
+import {NavLink, Route} from 'react-router-dom'
 import AuthPage from './components/routes/auth'
 import AdminPage from './components/routes/admin'
 
 class App extends Component {
-    static propTypes = {
-
-    }
+    static propTypes = {}
 
     render() {
         return (
@@ -14,10 +12,10 @@ class App extends Component {
                 <nav>
                     <ul>
                         <li>
-                            <NavLink to="/auth" activeStyle={{ color: 'red'}}>auth</NavLink>
+                            <NavLink to="/auth" activeStyle={{color: 'red'}}>auth</NavLink>
                         </li>
                         <li>
-                            <NavLink to="/admin" activeStyle={{ color: 'red'}}>admin</NavLink>
+                            <NavLink to="/admin" activeStyle={{color: 'red'}}>admin</NavLink>
                         </li>
                     </ul>
                 </nav>
