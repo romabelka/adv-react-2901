@@ -14,6 +14,8 @@ export const SIGN_IN_SUCCESS = `${prefix}/SIGN_IN_SUCCESS`
 export const SIGN_UP_START = `${prefix}/SIGN_UP_START`
 export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`
 
+export const SIGN_OUT = `${prefix}/SIGN_OUT`
+
 /**
  * Reducer
  * */
@@ -28,6 +30,8 @@ export default function reducer(state = new ReducerRecord(), action) {
         case SIGN_IN_SUCCESS:
         case SIGN_UP_SUCCESS:
             return state.set('user', payload.user)
+        case SIGN_OUT:
+            return state.set('user', null)
         default:
             return state
     }
@@ -36,6 +40,7 @@ export default function reducer(state = new ReducerRecord(), action) {
 /**
  * Selectors
  * */
+export const getUser = state => state.auth.user
 
 /**
  * Action Creators
@@ -68,6 +73,34 @@ export function signUp(email, password) {
             type: SIGN_UP_SUCCESS,
             payload: { user }
         })
+    }
+}
+
+export function checkAuth() {
+    return function (dispatch) {
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                dispatch({
+                    type: SIGN_IN_SUCCESS,
+                    payload: { user }
+                })
+            } else {
+                dispatch({
+                    type: SIGN_OUT
+                })
+            }
+        });
+    }
+}
+
+export function signOut() {
+    return function (dispatch) {
+        firebase.auth().signOut()
+            .then(() =>{
+                dispatch({
+                    type: SIGN_OUT
+                })
+            });
     }
 }
 
