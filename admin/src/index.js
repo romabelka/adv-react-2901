@@ -5,6 +5,9 @@ import {ConnectedRouter} from 'connected-react-router'
 import App from './App'
 import store from './redux'
 import history from './history'
+import {initAuth} from './ducks/auth'
+
+store.dispatch(initAuth())
 
 ReactDOM.render(
     <Provider store={store}>
