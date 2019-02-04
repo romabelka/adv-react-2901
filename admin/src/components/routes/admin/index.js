@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import {Route, NavLink, Redirect} from 'react-router-dom'
 import ParticipantsPage from '../participants'
 import {connect} from 'react-redux'
-import {getUser} from '../../../ducks/auth'
+import {getUser, signOut} from '../../../ducks/auth'
 
 class AdminPage extends Component {
     render() {
@@ -13,10 +13,17 @@ class AdminPage extends Component {
                 <h1>Admin</h1>
                 <div>
                     <NavLink to="/admin/participants">Participants</NavLink>
+                    <div>
+                        <span onClick={this.handleSignOut} style={{cursor: 'pointer'}}>Sign Out</span>
+                    </div>
                 </div>
                 <Route path="/admin/participants" component={ParticipantsPage}/>
             </div>
         )
+    }
+
+    handleSignOut = e => {
+        this.props.dispatch(signOut())
     }
 }
 
