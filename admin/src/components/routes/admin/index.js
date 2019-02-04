@@ -1,17 +1,29 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { signOut } from "../../../ducks/auth";
 
 class AdminPage extends Component {
-    static propTypes = {
+  static propTypes = {};
 
-    }
+  logOut = () => {
+    this.props.signOut().then(() => {
+      this.props.history.push("/auth");
+    });
+  };
 
-    render() {
-        return (
-            <div>
-                <h1>Admin</h1>
-            </div>
-        )
-    }
+  render() {
+    return (
+      <div>
+        <div>
+          <button onClick={this.logOut}>LogOut</button>
+        </div>
+        <h1>Admin</h1>
+      </div>
+    );
+  }
 }
 
-export default AdminPage
+export default connect(
+  null,
+  { signOut }
+)(AdminPage);
