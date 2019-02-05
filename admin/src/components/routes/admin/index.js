@@ -1,17 +1,9 @@
-import React, { Component } from 'react'
+import React from 'react'
 
-class AdminPage extends Component {
-    static propTypes = {
-
-    }
-
-    render() {
-        return (
-            <div>
-                <h1>Admin</h1>
-            </div>
-        )
-    }
-}
+const AdminPage = () => (
+  <div>
+    <h1>Admin</h1>
+  </div>
+);
 
 export default AdminPage
