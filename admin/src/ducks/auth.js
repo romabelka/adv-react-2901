@@ -1,6 +1,7 @@
-import { Record } from 'immutable'
-import firebase from 'firebase/app'
 import { appName } from '../config'
+import { Record } from 'immutable'
+import { createSelector } from 'reselect'
+import api from '../services/api'
 
 /**
  * Constants
@@ -8,10 +9,7 @@ import { appName } from '../config'
 export const moduleName = 'auth'
 const prefix = `${appName}/${moduleName}`
 
-export const SIGN_IN_START = `${prefix}/SIGN_IN_START`
 export const SIGN_IN_SUCCESS = `${prefix}/SIGN_IN_SUCCESS`
-
-export const SIGN_UP_START = `${prefix}/SIGN_UP_START`
 export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`
 
 /**
@@ -28,6 +26,7 @@ export default function reducer(state = new ReducerRecord(), action) {
     case SIGN_IN_SUCCESS:
     case SIGN_UP_SUCCESS:
       return state.set('user', payload.user)
+
     default:
       return state
   }
@@ -37,48 +36,44 @@ export default function reducer(state = new ReducerRecord(), action) {
  * Selectors
  * */
 
+export const userSelector = (state) => state[moduleName].user
+export const isAuthorizedSelector = createSelector(
+  userSelector,
+  (user) => !!user
+)
+
 /**
- * Action Creators
- * */
+ * Init logic
+ */
 
-export function signIn(email, password) {
-  return async (dispatch) => {
-    dispatch({
-      type: SIGN_IN_START
-    })
-
-    const user = await firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-
-    dispatch({
+export function init(store) {
+  api.onAuthStateChanged((user) => {
+    store.dispatch({
       type: SIGN_IN_SUCCESS,
       payload: { user }
     })
-  }
-}
-
-export function signUp(email, password) {
-  return async (dispatch) => {
-    dispatch({
-      type: SIGN_UP_START
-    })
-
-    const user = await firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-
-    dispatch({
-      type: SIGN_UP_SUCCESS,
-      payload: { user }
-    })
-  }
+  })
 }
 
 /**
- * Init
- **/
+ * Action Creators
+ * */
+export function signIn(email, password) {
+  return (dispatch) =>
+    api.signIn(email, password).then((user) =>
+      dispatch({
+        type: SIGN_IN_SUCCESS,
+        payload: { user }
+      })
+    )
+}
 
-firebase.auth().onAuthStateChanged((user) => {
-  console.log('--- user', user)
-})
+export function signUp(email, password) {
+  return (dispatch) =>
+    api.signUp(email, password).then((user) =>
+      dispatch({
+        type: SIGN_UP_SUCCESS,
+        payload: { user }
+      })
+    )
+}
