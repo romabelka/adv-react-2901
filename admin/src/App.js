@@ -5,6 +5,7 @@ import { NavLink, Route } from 'react-router-dom';
 import PrivateRoute from './components/common/private-route';
 import AdminPage from './components/routes/admin';
 import AuthPage from './components/routes/auth';
+import AddUsersPage from './components/routes/users';
 import { initUser } from './ducks/auth';
 
 class App extends Component {
@@ -12,7 +13,6 @@ class App extends Component {
 
 	componentDidMount() {
 		this.props.initUser();
-		// this.props.dispatch(initUser());
 	}
 
 	render() {
@@ -30,11 +30,17 @@ class App extends Component {
 								admin
 							</NavLink>
 						</li>
+						<li>
+							<NavLink to="/users" activeStyle={{ color: "red" }}>
+								users
+							</NavLink>
+						</li>
 					</ul>
 				</nav>
 				<section>
 					<Route path="/auth" component={AuthPage} />
 					<PrivateRoute path="/admin" component={AdminPage} />
+					<Route path="/users" component={AddUsersPage} />
 				</section>
 			</div>
 		);
