@@ -2,7 +2,8 @@ import { appName } from '../config'
 import { Record, List } from 'immutable'
 import { reset } from 'redux-form'
 import { createSelector } from 'reselect'
-import { take, put } from 'redux-saga/effects'
+import { takeEvery, put, call } from 'redux-saga/effects'
+import { generateId } from './utils'
 
 /**
  * Constants
@@ -79,16 +80,18 @@ export function addPerson(person) {
  *  Sagas
  */
 
+export function* addPersonSaga(action) {
+  const id = yield call(generateId)
+  const person = { ...action.payload, id }
+
+  yield put({
+    type: ADD_PERSON,
+    payload: { person }
+  })
+
+  yield put(reset('person'))
+}
+
 export function* saga() {
-  while (true) {
-    const action = yield take(ADD_PERSON_REQUEST)
-    const person = { ...action.payload, id: Date.now() }
-
-    yield put({
-      type: ADD_PERSON,
-      payload: { person }
-    })
-
-    yield put(reset('person'))
-  }
+  yield takeEvery(ADD_PERSON_REQUEST, addPersonSaga)
 }
