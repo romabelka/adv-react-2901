@@ -1,6 +1,7 @@
 import { appName } from '../config'
 import { Record } from 'immutable'
 import { createSelector } from 'reselect'
+import { takeEvery, call, put, all } from 'redux-saga/effects'
 import api from '../services/api'
 
 /**
@@ -9,8 +10,11 @@ import api from '../services/api'
 export const moduleName = 'auth'
 const prefix = `${appName}/${moduleName}`
 
+export const SIGN_IN_REQUEST = `${prefix}/SIGN_IN_REQUEST`
 export const SIGN_IN_SUCCESS = `${prefix}/SIGN_IN_SUCCESS`
+export const SIGN_IN_ERROR = `${prefix}/SIGN_IN_ERROR`
 export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`
+export const AUTH_STATE_CHANGE = `${prefix}/AUTH_STATE_CHANGE`
 
 /**
  * Reducer
@@ -25,6 +29,7 @@ export default function reducer(state = new ReducerRecord(), action) {
   switch (type) {
     case SIGN_IN_SUCCESS:
     case SIGN_UP_SUCCESS:
+    case AUTH_STATE_CHANGE:
       return state.set('user', payload.user)
 
     default:
@@ -49,7 +54,7 @@ export const isAuthorizedSelector = createSelector(
 export function init(store) {
   api.onAuthStateChanged((user) => {
     store.dispatch({
-      type: SIGN_IN_SUCCESS,
+      type: AUTH_STATE_CHANGE,
       payload: { user }
     })
   })
@@ -59,13 +64,10 @@ export function init(store) {
  * Action Creators
  * */
 export function signIn(email, password) {
-  return (dispatch) =>
-    api.signIn(email, password).then((user) =>
-      dispatch({
-        type: SIGN_IN_SUCCESS,
-        payload: { user }
-      })
-    )
+  return {
+    type: SIGN_IN_REQUEST,
+    payload: { email, password }
+  }
 }
 
 export function signUp(email, password) {
@@ -76,4 +78,28 @@ export function signUp(email, password) {
         payload: { user }
       })
     )
+}
+
+/**
+ * Sagas
+ */
+
+export function* signInSaga({ payload: { email, password } }) {
+  try {
+    const user = yield call(api.signIn, email, password)
+
+    yield put({
+      type: SIGN_IN_SUCCESS,
+      payload: { user }
+    })
+  } catch (error) {
+    yield put({
+      type: SIGN_IN_ERROR,
+      error
+    })
+  }
+}
+
+export function* saga() {
+  yield all([takeEvery(SIGN_IN_REQUEST, signInSaga)])
 }
