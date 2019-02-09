@@ -1,7 +1,7 @@
 import {appName} from '../config'
 import {Record} from 'immutable'
 import {createSelector} from 'reselect'
-import {takeEvery, call, put, all} from 'redux-saga/effects'
+import {takeEvery, call, put, all, select} from 'redux-saga/effects'
 import api from '../services/api'
 
 /**
@@ -17,12 +17,14 @@ export const SIGN_IN_ERROR = `${prefix}/SIGN_IN_ERROR`
 export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`
 export const SIGN_UP_ERROR = `${prefix}/SIGN_UP_ERROR`
 export const AUTH_STATE_CHANGE = `${prefix}/AUTH_STATE_CHANGE`
+export const CLEAR_AUTH_ATTEMPT_COUNTER = `${prefix}/CLEAR_AUTH_ATTEMPT_COUNTER`
 
 /**
  * Reducer
  * */
 export const ReducerRecord = Record({
-    user: null
+    user: null,
+    signInAttemptCount: 0
 })
 
 export default function reducer(state = new ReducerRecord(), action) {
@@ -32,8 +34,17 @@ export default function reducer(state = new ReducerRecord(), action) {
         case SIGN_IN_SUCCESS:
         case SIGN_UP_SUCCESS:
         case AUTH_STATE_CHANGE:
-            return state.set('user', payload.user)
-
+            return state.merge({
+                user: payload.user,
+                signInAttemptCount: 0
+            })
+        case SIGN_IN_ERROR:
+            return state.merge({
+                user: null,
+                signInAttemptCount: state.get('signInAttemptCount') + 1
+            })
+        case CLEAR_AUTH_ATTEMPT_COUNTER:
+            return state.set('signInAttemptCount', 0)
         default:
             return state
     }
@@ -48,6 +59,7 @@ export const isAuthorizedSelector = createSelector(
     userSelector,
     (user) => !!user
 )
+export const isAllowedToSignInSelector = (state) => state[moduleName].signInAttemptCount <= 3
 
 /**
  * Init logic
@@ -96,6 +108,13 @@ export function* signInSaga({payload: {email, password}}) {
             type: SIGN_IN_ERROR,
             error
         })
+
+        const isAllowedToSingInSelector = yield select(isAllowedToSignInSelector);
+        if (!isAllowedToSingInSelector) {
+            yield new Promise(resolve => setTimeout(resolve, 60000));
+
+            yield put({type: CLEAR_AUTH_ATTEMPT_COUNTER})
+        }
     }
 }
 
