@@ -21,8 +21,13 @@ class SignInForm extends Component {
               <Field component="input" name="password" type="password" />
             </div>
           </div>
-          <button type="submit">Sign In</button>
+          {!this.props.tooManySignInAttempts && (
+            <button type="submit">Sign In</button>
+          )}
         </form>
+        {this.props.tooManySignInAttempts && (
+          <h4 style={{ color: 'red' }}>Too many attempts!</h4>
+        )}
       </div>
     )
   }
