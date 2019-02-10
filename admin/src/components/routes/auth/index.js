@@ -3,7 +3,7 @@ import { Route, NavLink } from 'react-router-dom'
 import { connect } from 'react-redux'
 import SignInForm from '../../auth/sign-in-form'
 import SignUpForm from '../../auth/sign-up-form'
-import { signIn, signUp } from '../../../ducks/auth'
+import { signIn, signUp, tooManySignInAttempts } from '../../../ducks/auth'
 
 class AuthPage extends Component {
   static propTypes = {}
@@ -18,21 +18,28 @@ class AuthPage extends Component {
         <div>
           <NavLink to="/auth/sign-up">Sign Up</NavLink>
         </div>
-
         <Route path="/auth/sign-in" render={this.getSignInForm} />
         <Route path="/auth/sign-up" render={this.getSignUpForm} />
       </div>
     )
   }
 
-  getSignInForm = () => <SignInForm onSubmit={this.handleSignIn} />
+  getSignInForm = () => (
+    <SignInForm
+      tooManySignInAttempts={this.props.tooManySignInAttempts}
+      onSubmit={this.handleSignIn}
+    />
+  )
   getSignUpForm = () => <SignUpForm onSubmit={this.handleSignUp} />
 
   handleSignIn = ({ email, password }) => this.props.signIn(email, password)
   handleSignUp = ({ email, password }) => this.props.signUp(email, password)
 }
+const mapStateToProps = (state) => ({
+  tooManySignInAttempts: tooManySignInAttempts(state)
+})
 
 export default connect(
-  null,
+  mapStateToProps,
   { signIn, signUp }
 )(AuthPage)
