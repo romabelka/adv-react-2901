@@ -13,6 +13,7 @@ const prefix = `${appName}/${moduleName}`
 export const SIGN_IN_REQUEST = `${prefix}/SIGN_IN_REQUEST`
 export const SIGN_IN_SUCCESS = `${prefix}/SIGN_IN_SUCCESS`
 export const SIGN_IN_ERROR = `${prefix}/SIGN_IN_ERROR`
+export const SIGN_IN_LIMIT_WRONG_PERMISSION = `${prefix}/SIGN_IN_LIMIT_WRONG_PERMISSION`
 export const SIGN_UP_REQUEST = `${prefix}/SIGN_UP_REQUEST`
 export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`
 export const SIGN_UP_ERROR = `${prefix}/SIGN_UP_ERROR`
@@ -34,9 +35,8 @@ export default function reducer(state = new ReducerRecord(), action) {
     case SIGN_UP_SUCCESS:
     case AUTH_STATE_CHANGE:
       return state.set('user', payload.user)
-    case SIGN_UP_ERROR:
-    case SIGN_IN_ERROR:
-      return state.set('error', payload)
+    case SIGN_IN_LIMIT_WRONG_PERMISSION:
+      return state.set('error', new Error('You can not sign in'))
     default:
       return state
   }
@@ -110,8 +110,7 @@ export function* signInSaga() {
   }
 
   yield put({
-    type: SIGN_IN_ERROR,
-    payload: 'You can not sign in'
+    type: SIGN_IN_LIMIT_WRONG_PERMISSION
   })
 }
 

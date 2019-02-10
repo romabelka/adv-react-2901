@@ -27,7 +27,7 @@ class SignInForm extends Component {
           <button disabled={Boolean(error)} type="submit">
             Sign In
           </button>
-          {error && <div style={{ color: 'red' }}>{error}</div>}
+          {error && <div style={{ color: 'red' }}>{error.message}</div>}
         </form>
       </div>
     )
