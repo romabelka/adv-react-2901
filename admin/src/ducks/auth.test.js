@@ -2,7 +2,7 @@ import { put, call, select, delay } from 'redux-saga/effects'
 import {
   signInSaga,
   signInErrorSaga,
-  signInRequest,
+  signIn,
   signInSuccess,
   signInError,
   tooManySignInAttempts,
@@ -19,7 +19,7 @@ describe('Auth', () => {
     }
     const email = 'john.doe@example.com'
     const password = 'joHNdoE'
-    const action = signInRequest(email, password)
+    const action = signIn(email, password)
 
     const gen = signInSaga(action)
 
@@ -34,7 +34,7 @@ describe('Auth', () => {
     const error = new Error('something happened')
     const email = 'john.doe@example.com'
     const password = 'joHNdoE'
-    const action = signInRequest(email, password)
+    const action = signIn(email, password)
 
     const gen = signInSaga(action)
 

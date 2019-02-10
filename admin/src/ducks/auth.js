@@ -86,7 +86,7 @@ export function init(store) {
 /**
  * Action Creators
  * */
-export function signInRequest(email, password) {
+export function signIn(email, password) {
   return {
     type: SIGN_IN_REQUEST,
     payload: { email, password }

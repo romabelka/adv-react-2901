@@ -3,7 +3,7 @@ import {
   signInSaga,
   signInErrorSaga,
   signInError,
-  signInRequest,
+  signIn,
   signInSuccess,
   SIGN_IN_ATTEMPT_COUNT_INC,
   SIGN_IN_ATTEMPT_COUNT_RESET,
@@ -21,7 +21,7 @@ describe('Auth', () => {
   it('should successfully sign in user', async () => {
     const email = 'john.doe@example.com'
     const password = 'joHNdoE'
-    const initialAction = signInRequest(email, password)
+    const initialAction = signIn(email, password)
     const user = {
       id: 42,
       name: 'John Doe'
@@ -40,7 +40,7 @@ describe('Auth', () => {
     const error = new Error('something happened')
     const email = 'john.doe@example.com'
     const password = 'joHNdoE'
-    const initialAction = signInRequest(email, password)
+    const initialAction = signIn(email, password)
 
     api.signIn = jest
       .fn()
