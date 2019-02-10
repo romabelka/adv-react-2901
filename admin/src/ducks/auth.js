@@ -1,7 +1,7 @@
 import { appName } from '../config'
 import { Record } from 'immutable'
 import { createSelector } from 'reselect'
-import { takeEvery, call, put, all } from 'redux-saga/effects'
+import { takeEvery, call, put, all, take } from 'redux-saga/effects'
 import api from '../services/api'
 
 /**
@@ -22,7 +22,8 @@ export const AUTH_STATE_CHANGE = `${prefix}/AUTH_STATE_CHANGE`
  * Reducer
  * */
 export const ReducerRecord = Record({
-  user: null
+  user: null,
+  error: null
 })
 
 export default function reducer(state = new ReducerRecord(), action) {
@@ -33,7 +34,9 @@ export default function reducer(state = new ReducerRecord(), action) {
     case SIGN_UP_SUCCESS:
     case AUTH_STATE_CHANGE:
       return state.set('user', payload.user)
-
+    case SIGN_UP_ERROR:
+    case SIGN_IN_ERROR:
+      return state.set('error', payload)
     default:
       return state
   }
@@ -44,6 +47,7 @@ export default function reducer(state = new ReducerRecord(), action) {
  * */
 
 export const userSelector = (state) => state[moduleName].user
+export const errorSelector = (state) => state[moduleName].error
 export const isAuthorizedSelector = createSelector(
   userSelector,
   (user) => !!user
@@ -83,21 +87,34 @@ export function signUp(email, password) {
  * Sagas
  */
 
-export function* signInSaga({ payload: { email, password } }) {
-  try {
-    const user = yield call(api.signIn, email, password)
+export function* signInSaga() {
+  for (let i = 0; i < 3; i++) {
+    const {
+      payload: { email, password }
+    } = yield take(SIGN_IN_REQUEST)
 
-    yield put({
-      type: SIGN_IN_SUCCESS,
-      payload: { user }
-    })
-  } catch (error) {
-    yield put({
-      type: SIGN_IN_ERROR,
-      error
-    })
+    try {
+      const user = yield call(api.signIn, email, password)
+
+      yield put({
+        type: SIGN_IN_SUCCESS,
+        payload: { user }
+      })
+      i = 0
+    } catch (error) {
+      yield put({
+        type: SIGN_IN_ERROR,
+        error
+      })
+    }
   }
+
+  yield put({
+    type: SIGN_IN_ERROR,
+    payload: 'You can not sign in'
+  })
 }
+
 export function* signUpSaga({ payload: { email, password } }) {
   try {
     const user = yield call(api.signUp, email, password)
@@ -115,8 +132,5 @@ export function* signUpSaga({ payload: { email, password } }) {
 }
 
 export function* saga() {
-  console.log('AUTH START')
-  yield takeEvery(SIGN_IN_REQUEST, signInSaga)
-  yield takeEvery(SIGN_UP_REQUEST, signUpSaga)
-  console.log('AUTH FINISH')
+  yield all([signInSaga(), takeEvery(SIGN_UP_REQUEST, signUpSaga)])
 }
