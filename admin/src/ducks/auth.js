@@ -25,6 +25,7 @@ export const AUTH_STATE_CHANGE = `${prefix}/AUTH_STATE_CHANGE`
  * */
 export const ReducerRecord = Record({
   user: null
+  // , error: {}
 })
 
 export default function reducer(state = new ReducerRecord(), action) {
@@ -35,6 +36,9 @@ export default function reducer(state = new ReducerRecord(), action) {
     case SIGN_UP_SUCCESS:
     case AUTH_STATE_CHANGE:
       return state.set('user', payload.user)
+
+    // case SIGN_IN_ERROR:
+    //   return state.set('signinError', payload.error)
 
     default:
       return state
