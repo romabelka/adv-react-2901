@@ -24,12 +24,12 @@ export const AUTH_STATE_CHANGE = `${prefix}/AUTH_STATE_CHANGE`
  * Reducer
  * */
 export const ReducerRecord = Record({
-  user: null
-  // , error: {}
+  user: null,
+  error: null
 })
 
 export default function reducer(state = new ReducerRecord(), action) {
-  const { type, payload } = action
+  const { type, payload, error } = action
 
   switch (type) {
     case SIGN_IN_SUCCESS:
@@ -37,8 +37,8 @@ export default function reducer(state = new ReducerRecord(), action) {
     case AUTH_STATE_CHANGE:
       return state.set('user', payload.user)
 
-    // case SIGN_IN_ERROR:
-    //   return state.set('signinError', payload.error)
+    case SIGN_IN_ERROR:
+      return state.set('error', error)
 
     default:
       return state
@@ -54,6 +54,12 @@ export const isAuthorizedSelector = createSelector(
   userSelector,
   (user) => !!user
 )
+
+export const errorSelector = (state) => state[moduleName].error
+// export const isErrorSelector = createSelector(
+//   errorSelector,
+//   (error) => !!error
+// )
 
 /**
  * Init logic

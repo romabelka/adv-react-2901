@@ -1,10 +1,15 @@
 import React, { Component } from 'react'
-import { reduxForm, Field } from 'redux-form'
+import { connect } from 'react-redux'
+import { compose } from 'redux'
+import { Field, reduxForm } from 'redux-form'
+
+import { errorSelector } from '../../ducks/auth'
 
 class SignInForm extends Component {
   static propTypes = {}
 
   render() {
+    const { error } = this.props
     return (
       <div>
         <h3>Sign In</h3>
@@ -21,6 +26,9 @@ class SignInForm extends Component {
               <Field component="input" name="password" type="password" />
             </div>
           </div>
+          <div style={{ color: 'red' }}>
+            {error && (error.code, error.message)}
+          </div>
           <button type="submit">Sign In</button>
         </form>
       </div>
@@ -28,6 +36,9 @@ class SignInForm extends Component {
   }
 }
 
-export default reduxForm({
-  form: 'sign-in'
-})(SignInForm)
+export default compose(
+  reduxForm({
+    form: 'sign-in'
+  }),
+  connect((state) => ({ error: errorSelector(state) }))
+)(SignInForm)
