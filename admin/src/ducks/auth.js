@@ -97,7 +97,7 @@ export function* signInSaga({ payload: { email, password } }) {
   try {
     const user = yield call(api.signIn, email, password)
     yield put({
-      type: SIGN_UP_SUCCESS,
+      type: SIGN_IN_SUCCESS,
       payload: { user }
     })
   } catch (error) {
@@ -113,7 +113,7 @@ export function* signUpSaga({ payload: { email, password } }) {
     const user = yield call(api.signUp, email, password)
 
     yield put({
-      type: SIGN_IN_SUCCESS,
+      type: SIGN_UP_SUCCESS,
       payload: { user }
     })
   } catch (error) {
