@@ -1,5 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
+import 'firebase/firestore'
 
 class ApiService {
   fb = firebase
@@ -10,6 +11,13 @@ class ApiService {
     this.fb.auth().createUserWithEmailAndPassword(email, password)
 
   onAuthStateChanged = (callback) => this.fb.auth().onAuthStateChanged(callback)
+
+  fetchAllEvents = () =>
+    this.fb
+      .firestore()
+      .collection('events')
+      .get()
+      .then((res) => res.docs.map((doc) => doc.data()))
 }
 
 export default new ApiService()
