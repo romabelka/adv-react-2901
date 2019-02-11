@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { Route, NavLink } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { NavLink, Route } from 'react-router-dom'
+
+import { signIn, signUp } from '../../../ducks/auth'
 import SignInForm from '../../auth/sign-in-form'
 import SignUpForm from '../../auth/sign-up-form'
-import { signIn, signUp } from '../../../ducks/auth'
 
 class AuthPage extends Component {
   static propTypes = {}
