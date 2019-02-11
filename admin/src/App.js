@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { NavLink, Route } from 'react-router-dom'
 import AdminPage from './components/routes/admin'
 import AuthPage from './components/routes/auth'
+import EventsPage from './components/routes/events'
 import ProtectedRoute from './components/common/protected-route'
 
 export default class App extends Component {
@@ -33,6 +34,7 @@ export default class App extends Component {
         <div>
           <ProtectedRoute path="/admin" component={AdminPage} />
           <Route path="/auth" component={AuthPage} />
+          <Route path="/events" component={EventsPage} />
         </div>
       </Fragment>
     )
