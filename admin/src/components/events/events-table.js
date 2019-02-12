@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {
   fetchAllEvents,
+  toggleSelection,
   eventListSelector,
   loadedSelector,
   loadingSelector
@@ -31,9 +32,11 @@ export class EventsTable extends Component {
     <EventTableRow
       key={event.id}
       event={event}
-      onClick={() => this.props.toggleSelection(event.id)}
+      onClick={this.handleClick(event)}
     />
   )
+
+  handleClick = (event) => () => this.props.toggleSelection(event.id)
 }
 
 export default connect(
@@ -42,5 +45,5 @@ export default connect(
     loading: loadingSelector(state),
     loaded: loadedSelector(state)
   }),
-  { fetchAllEvents }
+  { fetchAllEvents, toggleSelection }
 )(EventsTable)
