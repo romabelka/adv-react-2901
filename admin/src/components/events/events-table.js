@@ -7,8 +7,9 @@ import {
   loadingSelector
 } from '../../ducks/events'
 import Loader from '../common/loader'
+import EventTableRow from './event-table-row'
 
-class EventsTable extends Component {
+export class EventsTable extends Component {
   static propTypes = {}
 
   componentDidMount() {
@@ -27,11 +28,11 @@ class EventsTable extends Component {
   getRows = () => this.props.events.map(this.getRow)
 
   getRow = (event) => (
-    <tr key={event.id}>
-      <td>{event.title}</td>
-      <td>{event.when}</td>
-      <td>{event.where}</td>
-    </tr>
+    <EventTableRow
+      key={event.id}
+      event={event}
+      onClick={() => this.props.toggleSelection(event.id)}
+    />
   )
 }
 
