@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Table, Column, InfiniteLoader } from 'react-virtualized'
+import { InfiniteLoader } from 'react-virtualized'
 import {
   fetchAllEvents,
   toggleSelection,

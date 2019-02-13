@@ -150,13 +150,18 @@ export function* fetchAllSaga() {
 
 export function* fetchLazySaga() {
   const state = yield select(stateSelector)
-  const lastElements = state.entities.last()
+
+  if (state.loading || state.loaded) return
 
   yield put({
     type: FETCH_LAZY_START
   })
 
-  const events = yield call(api.fetchCountEvents, lastElements.id)
+  const lastElements = state.entities.last()
+  const events = yield call(
+    api.fetchCountEvents,
+    lastElements && lastElements.id
+  )
 
   yield put({
     type: FETCH_LAZY_SUCCESS,
