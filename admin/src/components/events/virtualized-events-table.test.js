@@ -1,8 +1,7 @@
 import React from 'react'
-import { render } from 'enzyme'
+import Enzyme, { render } from 'enzyme'
 import { VirtualizedEventsTable } from './virtualized-events-table'
 import Adapter from 'enzyme-adapter-react-16'
-import Enzyme from 'enzyme/build'
 
 Enzyme.configure({ adapter: new Adapter() })
 
