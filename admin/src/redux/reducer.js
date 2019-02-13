@@ -1,13 +1,15 @@
 import { combineReducers } from 'redux'
 import { connectRouter } from 'connected-react-router'
 import { reducer as form } from 'redux-form'
-import authReducer from '../ducks/auth'
-import people from '../ducks/people'
+import authReducer, { moduleName as authModule } from '../ducks/auth'
+import peopleReducer, { moduleName as peopleModule } from '../ducks/people'
+import eventsReducer, { moduleName as eventsModule } from '../ducks/events'
 import history from '../history'
 
 export default combineReducers({
-  people,
-  auth: authReducer,
+  [peopleModule]: peopleReducer,
+  [eventsModule]: eventsReducer,
+  [authModule]: authReducer,
   router: connectRouter(history),
   form
 })
