@@ -1,2 +1,15 @@
+build
+build-dev
+build-tmp
 node_modules
+*.log
+*.lock
+*.rar
+*.zip
 .idea
+.vscode
+.project
+org.eclipse*
+.settings
+.DS_Store
+Thumbs.db

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import EventsTable from '../../events/virtualized-events-table'
+import VirtualizedLazyEvents from '../../events/virtualized-lazy-events-table'
 import SelectedEventsList from '../../events/selected-events-list'
 
 class EventsPage extends Component {
@@ -9,7 +9,7 @@ class EventsPage extends Component {
     return (
       <div>
         <SelectedEventsList />
-        <EventsTable />
+        <VirtualizedLazyEvents />
       </div>
     )
   }

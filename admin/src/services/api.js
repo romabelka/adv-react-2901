@@ -18,6 +18,15 @@ class ApiService {
       .collection('events')
       .get()
       .then((res) => res.docs.map((doc) => doc.data()))
+
+  fetchCountEvents = (lastId = '', limit = 15) =>
+    this.fb
+      .firestore()
+      .collection('events')
+      .limitToFirst(limit)
+      .startAt(lastId)
+      .get()
+      .then((res) => res.docs.map((doc) => doc.data()))
 }
 
 export default new ApiService()
