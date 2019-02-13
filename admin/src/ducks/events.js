@@ -1,4 +1,4 @@
-import { all, takeEvery, put, call } from 'redux-saga/effects'
+import { all, takeEvery, put, call, select } from 'redux-saga/effects'
 import { appName } from '../config'
 import { Record, List, OrderedSet } from 'immutable'
 import { createSelector } from 'reselect'
@@ -15,6 +15,10 @@ export const FETCH_ALL_REQUEST = `${prefix}/FETCH_ALL_REQUEST`
 export const FETCH_ALL_START = `${prefix}/FETCH_ALL_START`
 export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
 
+export const FETCH_LAZY_EVENTS_REQUEST = `${prefix}/FETCH_LAZY_EVENTS_REQUEST`
+export const FETCH_LAZY_START = `${prefix}/FETCH_LAZY_START`
+export const FETCH_LAZY_SUCCESS = `${prefix}/FETCH_LAZY_SUCCESS`
+
 export const TOGGLE_SELECTION = `${prefix}/TOGGLE_SELECTION`
 
 /**
@@ -23,6 +27,7 @@ export const TOGGLE_SELECTION = `${prefix}/TOGGLE_SELECTION`
 export const ReducerRecord = Record({
   loading: false,
   loaded: false,
+  eventsLoaded: false,
   selected: new OrderedSet([]),
   entities: new List([])
 })
@@ -43,12 +48,18 @@ export default function reducer(state = new ReducerRecord(), action) {
   switch (type) {
     case FETCH_ALL_START:
       return state.set('loading', true)
+    case FETCH_LAZY_START:
+      return state.set('eventsLoaded', false)
 
     case FETCH_ALL_SUCCESS:
       return state
         .set('loading', false)
         .set('loaded', true)
         .set('entities', fbToEntities(payload, EventRecord))
+    case FETCH_LAZY_SUCCESS:
+      return state
+        .set('eventsLoaded', true)
+        .mergeIn(['entities'], fbToEntities(payload, EventRecord))
 
     case TOGGLE_SELECTION:
       return state.update('selected', (selected) =>
@@ -113,6 +124,13 @@ export function toggleSelection(id) {
   }
 }
 
+export function fetchLazyEvents(id) {
+  return {
+    type: FETCH_LAZY_EVENTS_REQUEST,
+    payload: { id }
+  }
+}
+
 /**
  * Sagas
  * */
@@ -130,6 +148,25 @@ export function* fetchAllSaga() {
   })
 }
 
+export function* fetchLazySaga() {
+  const state = yield select(stateSelector)
+  const lastElements = state.entities.last()
+
+  yield put({
+    type: FETCH_LAZY_START
+  })
+
+  const events = yield call(api.fetchCountEvents, lastElements.id)
+
+  yield put({
+    type: FETCH_LAZY_SUCCESS,
+    payload: events
+  })
+}
+
 export function* saga() {
-  yield all([takeEvery(FETCH_ALL_REQUEST, fetchAllSaga)])
+  yield all([
+    takeEvery(FETCH_ALL_REQUEST, fetchAllSaga),
+    takeEvery(FETCH_LAZY_EVENTS_REQUEST, fetchLazySaga)
+  ])
 }
