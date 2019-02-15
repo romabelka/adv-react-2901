@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 
 class SelectedEventCard extends Component {
   static propTypes = {}
@@ -7,9 +6,16 @@ class SelectedEventCard extends Component {
   render() {
     const { event } = this.props
     return (
-      <div>
+      <div
+        style={{
+          width: 400,
+          height: 150,
+          border: '1px solid black',
+          boxSizing: 'border-box'
+        }}
+      >
         <h3>{event.title}</h3>
-        <p>{event.where}</p>
+        <h4>{event.where}</h4>
       </div>
     )
   }

@@ -1,4 +1,4 @@
-import { all, takeEvery, put, call } from 'redux-saga/effects'
+import { all, takeEvery, put, call, select } from 'redux-saga/effects'
 import { appName } from '../config'
 import { Record, List, OrderedSet } from 'immutable'
 import { createSelector } from 'reselect'
@@ -16,6 +16,10 @@ export const FETCH_ALL_START = `${prefix}/FETCH_ALL_START`
 export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
 
 export const TOGGLE_SELECTION = `${prefix}/TOGGLE_SELECTION`
+
+export const FETCH_LAZY_REQUEST = `${prefix}/FETCH_LAZY_REQUEST`
+export const FETCH_LAZY_START = `${prefix}/FETCH_LAZY_START`
+export const FETCH_LAZY_SUCCESS = `${prefix}/FETCH_LAZY_SUCCESS`
 
 /**
  * Reducer
@@ -56,6 +60,12 @@ export default function reducer(state = new ReducerRecord(), action) {
           ? selected.remove(payload.id)
           : selected.add(payload.id)
       )
+
+    case FETCH_LAZY_SUCCESS:
+      return state
+        .set('loading', false)
+        .mergeIn(['entities'], fbToEntities(payload, EventRecord))
+        .set('loaded', Object.keys(payload).length < 10)
 
     default:
       return state
@@ -113,6 +123,12 @@ export function toggleSelection(id) {
   }
 }
 
+export function fetchLazy() {
+  return {
+    type: FETCH_LAZY_REQUEST
+  }
+}
+
 /**
  * Sagas
  * */
@@ -130,6 +146,28 @@ export function* fetchAllSaga() {
   })
 }
 
+export const fetchLazySaga = function*() {
+  const state = yield select(stateSelector)
+
+  if (state.loading || state.loaded) return
+
+  yield put({
+    type: FETCH_LAZY_START
+  })
+
+  const lastEvent = state.entities.last()
+
+  const data = yield call(api.fetchLazyEvents, lastEvent && lastEvent.title)
+
+  yield put({
+    type: FETCH_LAZY_SUCCESS,
+    payload: data
+  })
+}
+
 export function* saga() {
-  yield all([takeEvery(FETCH_ALL_REQUEST, fetchAllSaga)])
+  yield all([
+    takeEvery(FETCH_ALL_REQUEST, fetchAllSaga),
+    takeEvery(FETCH_LAZY_REQUEST, fetchLazySaga)
+  ])
 }
