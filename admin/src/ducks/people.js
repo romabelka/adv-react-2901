@@ -70,6 +70,13 @@ export const peopleSelector = createSelector(
   (state) => state.entities.valueSeq().toArray()
 )
 
+const idSelector = (_, { id }) => id
+export const personSelector = createSelector(
+  stateSelector,
+  idSelector,
+  (state, id) => state.entities.find((person) => person.id === id)
+)
+
 /**
  * Action Creators
  * */
