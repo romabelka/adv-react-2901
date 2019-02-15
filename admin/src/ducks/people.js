@@ -5,6 +5,26 @@ import { createSelector } from 'reselect'
 import { takeEvery, put, call } from 'redux-saga/effects'
 import { generateId } from './utils'
 
+const peopleMock = [
+  {
+    id: 1550249873601,
+    firstName: 'laksjdfh',
+    lastName: 'asdkjlfh',
+    email: 'asfd@asdf.com'
+  },
+  {
+    id: 1550249882013,
+    firstName: 'Roma',
+    lastName: 'asdf',
+    email: 'asfdg@asdf.com'
+  },
+  {
+    id: 1550249933987,
+    firstName: 'ASD',
+    lastName: 'asdf',
+    email: 'erty@sreg.com'
+  }
+]
 /**
  * Constants
  * */
@@ -17,7 +37,7 @@ export const ADD_PERSON_REQUEST = `${prefix}/ADD_PERSON_REQUEST`
  * Reducer
  * */
 const ReducerState = Record({
-  entities: new List([])
+  entities: new List(peopleMock)
 })
 
 const PersonRecord = Record({

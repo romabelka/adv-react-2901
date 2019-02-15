@@ -1,16 +1,18 @@
 import React, { Component } from 'react'
+import { DropTarget } from 'react-dnd'
 
 class SelectedEventCard extends Component {
   static propTypes = {}
 
   render() {
-    const { event } = this.props
-    return (
+    const { event, dropTarget, canDrop, isOver } = this.props
+    const border = `1px solid ${canDrop ? (isOver ? 'red' : 'green') : 'black'}`
+    return dropTarget(
       <div
         style={{
+          border,
           width: 400,
           height: 150,
-          border: '1px solid black',
           boxSizing: 'border-box'
         }}
       >
@@ -21,4 +23,22 @@ class SelectedEventCard extends Component {
   }
 }
 
-export default SelectedEventCard
+const spec = {
+  drop(props, monitor) {
+    console.log(
+      '---',
+      'dropped person',
+      monitor.getItem(),
+      'on event',
+      props.event
+    )
+  }
+}
+
+const collect = (connect, monitor) => ({
+  dropTarget: connect.dropTarget(),
+  canDrop: monitor.canDrop(),
+  isOver: monitor.isOver()
+})
+
+export default DropTarget(['person'], spec, collect)(SelectedEventCard)
