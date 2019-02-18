@@ -3,28 +3,9 @@ import { Record, List } from 'immutable'
 import { reset } from 'redux-form'
 import { createSelector } from 'reselect'
 import { takeEvery, put, call } from 'redux-saga/effects'
-import { generateId } from './utils'
+import api from '../services/api'
+import { fbToEntities } from '../services/util'
 
-const peopleMock = [
-  {
-    id: 1550249873601,
-    firstName: 'laksjdfh',
-    lastName: 'asdkjlfh',
-    email: 'asfd@asdf.com'
-  },
-  {
-    id: 1550249882013,
-    firstName: 'Roma',
-    lastName: 'asdf',
-    email: 'asfdg@asdf.com'
-  },
-  {
-    id: 1550249933987,
-    firstName: 'ASD',
-    lastName: 'asdf',
-    email: 'erty@sreg.com'
-  }
-]
 /**
  * Constants
  * */
@@ -32,12 +13,14 @@ export const moduleName = 'people'
 const prefix = `${appName}/${moduleName}`
 export const ADD_PERSON = `${prefix}/ADD_PERSON`
 export const ADD_PERSON_REQUEST = `${prefix}/ADD_PERSON_REQUEST`
+export const FETCH_PEOPLE_REQUEST = `${prefix}/FETCH_PEOPLE_REQUEST`
+export const FETCH_PEOPLE_SUCCESS = `${prefix}/FETCH_PEOPLE_SUCCESS`
 
 /**
  * Reducer
  * */
 const ReducerState = Record({
-  entities: new List(peopleMock)
+  entities: new List([])
 })
 
 const PersonRecord = Record({
@@ -53,9 +36,10 @@ export default function reducer(state = new ReducerState(), action) {
   switch (type) {
     case ADD_PERSON:
       return state.update('entities', (entities) =>
-        entities.push(new PersonRecord(payload.person))
+        entities.push(new PersonRecord(payload))
       )
-
+    case FETCH_PEOPLE_SUCCESS:
+      return state.set('entities', fbToEntities(payload, PersonRecord))
     default:
       return state
   }
@@ -88,37 +72,37 @@ export function addPerson(person) {
   }
 }
 
-/*
-export function addPerson(person) {
-  return (dispatch) => {
-    dispatch({
-      type: ADD_PERSON,
-      payload: {
-        person: { id: Date.now(), ...person }
-      }
-    })
-
-    dispatch(reset('person'))
+export function fetchPeople() {
+  return {
+    type: FETCH_PEOPLE_REQUEST
   }
 }
-*/
 
 /**
  *  Sagas
  */
 
-export function* addPersonSaga(action) {
-  const id = yield call(generateId)
-  const person = { ...action.payload, id }
+export function* addPersonSaga({ payload: person }) {
+  const { id } = yield call(api.createPerson, person)
 
   yield put({
     type: ADD_PERSON,
-    payload: { person }
+    payload: { ...person, id }
   })
 
   yield put(reset('person'))
 }
 
+export function* fetchPeopleSaga() {
+  const people = yield call(api.fetchPeople)
+
+  yield put({
+    type: FETCH_PEOPLE_SUCCESS,
+    payload: people
+  })
+}
+
 export function* saga() {
   yield takeEvery(ADD_PERSON_REQUEST, addPersonSaga)
+  yield takeEvery(FETCH_PEOPLE_REQUEST, fetchPeopleSaga)
 }
