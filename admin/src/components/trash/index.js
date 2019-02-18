@@ -32,12 +32,13 @@ const spec = {
   drop(props, monitor) {
     const { removeEvent, removePerson } = props
     const { id } = monitor.getItem()
-    const type = monitor
-      .getItemType()({
-        event: removeEvent,
-        person: removePerson
-      })
-      [type](id)
+    const type = monitor.getItemType()
+    const removeAction = {
+      event: removeEvent,
+      person: removePerson
+    }[type]
+
+    removeAction(id)
   }
 }
 
