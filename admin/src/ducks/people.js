@@ -15,6 +15,8 @@ export const ADD_PERSON = `${prefix}/ADD_PERSON`
 export const ADD_PERSON_REQUEST = `${prefix}/ADD_PERSON_REQUEST`
 export const FETCH_PEOPLE_REQUEST = `${prefix}/FETCH_PEOPLE_REQUEST`
 export const FETCH_PEOPLE_SUCCESS = `${prefix}/FETCH_PEOPLE_SUCCESS`
+export const REMOVE_PERSON_REQUEST = `${prefix}/REMOVE_PERSON_REQUEST`
+export const REMOVE_PERSON_SUCCESS = `${prefix}/REMOVE_PERSON_SUCCESS`
 
 /**
  * Reducer
@@ -78,6 +80,13 @@ export function fetchPeople() {
   }
 }
 
+export function removePerson(id) {
+  return {
+    type: REMOVE_PERSON_REQUEST,
+    payload: { id }
+  }
+}
+
 /**
  *  Sagas
  */
@@ -102,7 +111,14 @@ export function* fetchPeopleSaga() {
   })
 }
 
+export function* removePersonSaga({ payload }) {
+  const { id } = payload
+
+  console.log('REMOVE PERSON SAGA = ', id)
+}
+
 export function* saga() {
   yield takeEvery(ADD_PERSON_REQUEST, addPersonSaga)
   yield takeEvery(FETCH_PEOPLE_REQUEST, fetchPeopleSaga)
+  yield takeEvery(REMOVE_PERSON_REQUEST, removePersonSaga)
 }

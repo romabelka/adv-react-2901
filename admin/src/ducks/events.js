@@ -22,6 +22,8 @@ export const ADD_PERSON_REQUEST = `${prefix}/ADD_PERSON_REQUEST`
 export const FETCH_LAZY_REQUEST = `${prefix}/FETCH_LAZY_REQUEST`
 export const FETCH_LAZY_START = `${prefix}/FETCH_LAZY_START`
 export const FETCH_LAZY_SUCCESS = `${prefix}/FETCH_LAZY_SUCCESS`
+export const REMOVE_EVENT_REQUEST = `${prefix}/REMOVE_EVENT_REQUEST`
+export const REMOVE_EVENT_SUCCESS = `${prefix}/REMOVE_EVENT_SUCCESS`
 
 /**
  * Reducer
@@ -144,6 +146,13 @@ export function addPersonToEvent(personId, eventId) {
   }
 }
 
+export function removeEvent(id) {
+  return {
+    type: REMOVE_EVENT_REQUEST,
+    payload: { id }
+  }
+}
+
 /**
  * Sagas
  * */
@@ -200,10 +209,17 @@ export function* addPersonToEventSaga({ payload }) {
   })
 }
 
+export function* removeEventSaga({ payload }) {
+  const { id } = payload
+
+  console.log('REMOVE EVENT SAGA')
+}
+
 export function* saga() {
   yield all([
     takeEvery(FETCH_ALL_REQUEST, fetchAllSaga),
     takeEvery(FETCH_LAZY_REQUEST, fetchLazySaga),
-    takeEvery(ADD_PERSON_REQUEST, addPersonToEventSaga)
+    takeEvery(ADD_PERSON_REQUEST, addPersonToEventSaga),
+    takeEvery(REMOVE_EVENT_REQUEST, removeEventSaga)
   ])
 }

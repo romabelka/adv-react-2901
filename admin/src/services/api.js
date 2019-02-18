@@ -52,6 +52,10 @@ class ApiService {
 
     return eventRef.update({ people })
   }
+
+  removePerson = (id) => this.people.doc(id).delete()
+
+  removeEvent = (id) => this.events.doc(id).delete()
 }
 
 export default new ApiService()

@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { DropTarget } from 'react-dnd'
+import { DropTarget, DragSource } from 'react-dnd'
 import { connect } from 'react-redux'
 import { addPersonToEvent } from '../../ducks/events'
+import { compose } from 'redux'
 
 class SelectedEventCard extends Component {
   static propTypes = {}
@@ -25,7 +26,7 @@ class SelectedEventCard extends Component {
   }
 }
 
-const spec = {
+const specDrop = {
   drop(props, monitor) {
     const { addPersonToEvent, event } = props
 
@@ -33,13 +34,31 @@ const spec = {
   }
 }
 
-const collect = (connect, monitor) => ({
+const specDrag = {
+  beginDrag({ event }) {
+    return {
+      id: event.id
+    }
+  }
+}
+
+const collectForDrop = (connect, monitor) => ({
   dropTarget: connect.dropTarget(),
   canDrop: monitor.canDrop(),
   isOver: monitor.isOver()
 })
 
-export default connect(
-  null,
-  { addPersonToEvent }
-)(DropTarget(['person'], spec, collect)(SelectedEventCard))
+const collectForDrag = (connect, monitor) => ({
+  dragSource: connect.dragSource(),
+  isDragging: monitor.isDragging(),
+  dragPreview: connect.dragPreview()
+})
+
+export default compose(
+  connect(
+    null,
+    { addPersonToEvent }
+  ),
+  DropTarget(['person'], specDrop, collectForDrop),
+  DragSource('event', specDrag, collectForDrag)
+)(SelectedEventCard)
