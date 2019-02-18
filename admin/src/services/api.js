@@ -4,6 +4,7 @@ import 'firebase/firestore'
 
 const fb = firebase
 const fs = fb.firestore()
+const reduceDocs = (res, doc) => ({ ...res, [doc.id]: doc.data() })
 
 class ApiService {
   events = fs.collection('events')
@@ -19,7 +20,7 @@ class ApiService {
   fetchAllEvents = async () => {
     const { docs } = await this.events.get()
 
-    return docs.map((doc) => doc.data())
+    return docs.reduce(reduceDocs, {})
   }
 
   fetchLazyEvents = async (id = '') => {
@@ -29,17 +30,28 @@ class ApiService {
       .limit(10)
       .get()
 
-    return docs.map((doc) => doc.data())
+    return docs.reduce(reduceDocs, {})
   }
 
   fetchPeople = async () => {
     const { docs } = await this.people.get()
 
-    return docs.map((doc) => doc.data())
+    return docs.reduce(reduceDocs, {})
   }
 
   createPerson = ({ email, firstName, lastName }) =>
     this.people.add({ email, firstName, lastName })
+
+  addPersonToEvent = async (eventId, people) => {
+    const eventRef = this.events.doc(eventId)
+    const event = await eventRef.get()
+
+    if (!event.exists) {
+      return
+    }
+
+    return eventRef.update({ people })
+  }
 }
 
 export default new ApiService()

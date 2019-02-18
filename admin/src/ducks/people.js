@@ -1,10 +1,10 @@
 import { appName } from '../config'
-import { Record, List } from 'immutable'
+import { Record, OrderedMap } from 'immutable'
 import { reset } from 'redux-form'
 import { createSelector } from 'reselect'
 import { takeEvery, put, call } from 'redux-saga/effects'
 import api from '../services/api'
-import { fbToEntities } from '../services/util'
+import { fbToMapEntities } from '../services/util'
 
 /**
  * Constants
@@ -20,7 +20,7 @@ export const FETCH_PEOPLE_SUCCESS = `${prefix}/FETCH_PEOPLE_SUCCESS`
  * Reducer
  * */
 const ReducerState = Record({
-  entities: new List([])
+  entities: new OrderedMap()
 })
 
 const PersonRecord = Record({
@@ -39,7 +39,7 @@ export default function reducer(state = new ReducerState(), action) {
         entities.push(new PersonRecord(payload))
       )
     case FETCH_PEOPLE_SUCCESS:
-      return state.set('entities', fbToEntities(payload, PersonRecord))
+      return state.set('entities', fbToMapEntities(payload, PersonRecord))
     default:
       return state
   }
