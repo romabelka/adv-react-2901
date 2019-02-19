@@ -48,6 +48,20 @@ class ApiService {
       .collection('events')
       .doc(eventId)
       .update({ peopleIds })
+
+  deleteEvent = (id) =>
+    this.fb
+      .firestore()
+      .collection('events')
+      .doc(id)
+      .delete()
+
+  deletePerson = (id) =>
+    this.fb
+      .firestore()
+      .collection('events')
+      .doc(id)
+      .delete()
 }
 
 export default new ApiService()
