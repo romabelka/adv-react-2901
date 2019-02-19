@@ -8,7 +8,8 @@ import {
   fork,
   delay,
   cancel,
-  cancelled
+  cancelled,
+  spawn
 } from 'redux-saga/effects'
 import { reset } from 'redux-form'
 import { createSelector } from 'reselect'
@@ -143,6 +144,12 @@ export function* deletePersonSaga({ payload }) {
 }
 
 export function* syncPeopleWithPolling() {
+  while (true) {
+    yield fork(fetchAllSaga)
+    yield delay(2000)
+    throw new Error('some bad error')
+  }
+  /*
   try {
     while (true) {
       yield fork(fetchAllSaga)
@@ -153,6 +160,7 @@ export function* syncPeopleWithPolling() {
       console.log('---', 'saga has been cancelled')
     }
   }
+*/
 }
 
 export function* cancelableSyncSaga() {
@@ -171,7 +179,7 @@ function* almostTakeEvery(pattern, saga) {
 */
 
 export function* saga() {
-  yield fork(cancelableSyncSaga)
+  yield spawn(cancelableSyncSaga)
 
   yield all([
     takeEvery(ADD_PERSON_REQUEST, addPersonSaga),
