@@ -15,6 +15,7 @@ class SelectedEventsList extends Component {
         rowCount={this.props.events.length}
         rowHeight={150}
         rowRenderer={this.rowRenderer}
+        data={this.props.events}
       />
     )
   }
@@ -26,6 +27,8 @@ class SelectedEventsList extends Component {
   )
 }
 
-export default connect((state) => ({
-  events: selectedEventsSelector(state)
-}))(SelectedEventsList)
+export default connect((state) => {
+  return {
+    events: selectedEventsSelector(state)
+  }
+})(SelectedEventsList)

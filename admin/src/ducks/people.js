@@ -1,43 +1,31 @@
 import { appName } from '../config'
-import { Record, List } from 'immutable'
+import { Record, OrderedMap } from 'immutable'
+import { put, call, all, takeEvery, select } from 'redux-saga/effects'
 import { reset } from 'redux-form'
 import { createSelector } from 'reselect'
-import { takeEvery, put, call } from 'redux-saga/effects'
-import { generateId } from './utils'
+import { fbToEntities } from '../services/util'
+import api from '../services/api'
 
-const peopleMock = [
-  {
-    id: 1550249873601,
-    firstName: 'laksjdfh',
-    lastName: 'asdkjlfh',
-    email: 'asfd@asdf.com'
-  },
-  {
-    id: 1550249882013,
-    firstName: 'Roma',
-    lastName: 'asdf',
-    email: 'asfdg@asdf.com'
-  },
-  {
-    id: 1550249933987,
-    firstName: 'ASD',
-    lastName: 'asdf',
-    email: 'erty@sreg.com'
-  }
-]
 /**
  * Constants
  * */
 export const moduleName = 'people'
 const prefix = `${appName}/${moduleName}`
-export const ADD_PERSON = `${prefix}/ADD_PERSON`
 export const ADD_PERSON_REQUEST = `${prefix}/ADD_PERSON_REQUEST`
+export const ADD_PERSON_START = `${prefix}/ADD_PERSON_START`
+export const ADD_PERSON_SUCCESS = `${prefix}/ADD_PERSON_SUCCESS`
+
+export const FETCH_ALL_REQUEST = `${prefix}/FETCH_ALL_REQUEST`
+export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
+
+export const DELETE_PERSON_REQUEST = `${prefix}/DELETE_PERSON_REQUEST`
+export const DELETE_PERSON_SUCCESS = `${prefix}/DELETE_PERSON_SUCCESS`
 
 /**
  * Reducer
  * */
 const ReducerState = Record({
-  entities: new List(peopleMock)
+  entities: new OrderedMap({})
 })
 
 const PersonRecord = Record({
@@ -51,10 +39,14 @@ export default function reducer(state = new ReducerState(), action) {
   const { type, payload } = action
 
   switch (type) {
-    case ADD_PERSON:
-      return state.update('entities', (entities) =>
-        entities.push(new PersonRecord(payload.person))
-      )
+    case ADD_PERSON_SUCCESS:
+      return state.setIn(['entities', payload.id], new PersonRecord(payload))
+
+    case FETCH_ALL_SUCCESS:
+      return state.set('entities', fbToEntities(payload, PersonRecord))
+
+    case DELETE_PERSON_SUCCESS:
+      return state.deleteIn(['entities', payload.id])
 
     default:
       return state
@@ -71,54 +63,83 @@ export const peopleSelector = createSelector(
 )
 
 const idSelector = (_, { id }) => id
+
 export const personSelector = createSelector(
   stateSelector,
   idSelector,
-  (state, id) => state.entities.find((person) => person.id === id)
+  (state, id) => state.getIn(['entities', id])
 )
+
+export const peopleByIdsSelector = (state, ids) =>
+  ids.map((id) => stateSelector(state).getIn(['entities', id])).filter(Boolean)
 
 /**
  * Action Creators
  * */
+export const addPerson = (person) => ({
+  type: ADD_PERSON_REQUEST,
+  payload: { person }
+})
 
-export function addPerson(person) {
+export function fetchAllPeople() {
   return {
-    type: ADD_PERSON_REQUEST,
-    payload: person
+    type: FETCH_ALL_REQUEST
   }
 }
 
-/*
-export function addPerson(person) {
-  return (dispatch) => {
-    dispatch({
-      type: ADD_PERSON,
-      payload: {
-        person: { id: Date.now(), ...person }
-      }
-    })
-
-    dispatch(reset('person'))
+export function deletePerson(id) {
+  return {
+    type: DELETE_PERSON_REQUEST,
+    payload: { id }
   }
 }
-*/
 
 /**
- *  Sagas
- */
+ * Sagas
+ **/
 
 export function* addPersonSaga(action) {
-  const id = yield call(generateId)
-  const person = { ...action.payload, id }
+  yield put({
+    type: ADD_PERSON_START,
+    payload: { ...action.payload.person }
+  })
+
+  const { id } = yield call(api.addPerson, action.payload.person)
 
   yield put({
-    type: ADD_PERSON,
-    payload: { person }
+    type: ADD_PERSON_SUCCESS,
+    payload: { id, ...action.payload.person }
   })
 
   yield put(reset('person'))
 }
 
+export function* fetchAllSaga() {
+  try {
+    const data = yield call(api.loadAllPeople)
+
+    yield put({
+      type: FETCH_ALL_SUCCESS,
+      payload: data
+    })
+  } catch (_) {}
+}
+
+export function* deletePersonSaga({ payload }) {
+  try {
+    yield call(api.deletePerson, payload.id)
+
+    yield put({
+      type: DELETE_PERSON_SUCCESS,
+      payload
+    })
+  } catch (_) {}
+}
+
 export function* saga() {
-  yield takeEvery(ADD_PERSON_REQUEST, addPersonSaga)
+  yield all([
+    takeEvery(ADD_PERSON_REQUEST, addPersonSaga),
+    takeEvery(FETCH_ALL_REQUEST, fetchAllSaga),
+    takeEvery(DELETE_PERSON_REQUEST, deletePersonSaga)
+  ])
 }
