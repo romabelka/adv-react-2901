@@ -9,8 +9,10 @@ import {
   delay,
   cancel,
   cancelled,
-  spawn
+  spawn,
+  take
 } from 'redux-saga/effects'
+import { eventChannel } from 'redux-saga'
 import { reset } from 'redux-form'
 import { createSelector } from 'reselect'
 import { fbToEntities } from '../services/util'
@@ -27,6 +29,8 @@ export const ADD_PERSON_SUCCESS = `${prefix}/ADD_PERSON_SUCCESS`
 
 export const FETCH_ALL_REQUEST = `${prefix}/FETCH_ALL_REQUEST`
 export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
+
+export const UPDATE = `${prefix}/UPDATE`
 
 export const DELETE_PERSON_REQUEST = `${prefix}/DELETE_PERSON_REQUEST`
 export const DELETE_PERSON_SUCCESS = `${prefix}/DELETE_PERSON_SUCCESS`
@@ -50,6 +54,7 @@ export default function reducer(state = new ReducerState(), action) {
 
   switch (type) {
     case FETCH_ALL_SUCCESS:
+    case UPDATE:
       return state.set('entities', fbToEntities(payload, PersonRecord))
 
     case DELETE_PERSON_SUCCESS:
@@ -178,8 +183,22 @@ function* almostTakeEvery(pattern, saga) {
 }
 */
 
+const createChannel = () => eventChannel((emit) => api.subscribeForPeople(emit))
+
+export function* syncPeopleSaga() {
+  const channel = yield call(createChannel)
+  while (true) {
+    const data = yield take(channel)
+
+    yield put({
+      type: UPDATE,
+      payload: data
+    })
+  }
+}
+
 export function* saga() {
-  yield spawn(cancelableSyncSaga)
+  yield spawn(syncPeopleSaga)
 
   yield all([
     takeEvery(ADD_PERSON_REQUEST, addPersonSaga),

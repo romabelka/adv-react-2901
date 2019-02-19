@@ -12,12 +12,18 @@ class ApiService {
 
   onAuthStateChanged = (callback) => this.fb.auth().onAuthStateChanged(callback)
 
+  subscribeForPeople = (callback) =>
+    this.fb
+      .firestore()
+      .collection('people')
+      .onSnapshot((snapshot) => callback(resToEntities(snapshot)))
+
   fetchAllEvents = () =>
     this.fb
       .firestore()
       .collection('events')
       .get()
-      .then((res) => res.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      .then(resToEntities)
 
   fetchLazyEvents = (id) =>
     this.fb
@@ -27,14 +33,14 @@ class ApiService {
       .startAfter(id ? id : '')
       .limit(10)
       .get()
-      .then((res) => res.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      .then(resToEntities)
 
   loadAllPeople = () =>
     this.fb
       .firestore()
       .collection('people')
       .get()
-      .then((res) => res.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      .then(resToEntities)
 
   addPerson = (person) =>
     this.fb
@@ -59,9 +65,13 @@ class ApiService {
   deletePerson = (id) =>
     this.fb
       .firestore()
-      .collection('events')
+      .collection('people')
       .doc(id)
       .delete()
+}
+
+function resToEntities(res) {
+  return res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
 }
 
 export default new ApiService()
