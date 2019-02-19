@@ -19,6 +19,8 @@ const enhancer = applyMiddleware(
 
 const store = createStore(reducer, enhancer)
 
+//sagaMiddleware.run(authSaga)
+//sagaMiddleware.run(peopleSaga)
 sagaMiddleware.run(saga)
 
 initAuth(store)
