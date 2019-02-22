@@ -1,16 +1,16 @@
 import React, { Component } from 'react'
 import {View, Text} from 'react-native'
 
-class HelloWorld extends Component {
+class HelloWorldAndroid extends Component {
     render() {
         return (
             <View>
                 <Text>
-                    Hello
+                    Hello Android
                 </Text>
             </View>
         )
     }
 }
 
-export default HelloWorld
+export default HelloWorldAndroid
