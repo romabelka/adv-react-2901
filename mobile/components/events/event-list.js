@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {View} from 'react-native'
+import {ScrollView, FlatList} from 'react-native'
 import EventCard from './event-card'
 
 class EventList extends Component {
@@ -7,12 +7,24 @@ class EventList extends Component {
 
     };
 
+    renderItem = ({ item }) => <EventCard event={item} />
+    keyExtractor = (item) => item.id
+
     render() {
         return (
-            <View>
-                {this.props.events.map(event => <EventCard key={event.id} event={event}/>)}
-            </View>
+            <FlatList
+                data = {this.props.events}
+                renderItem = {this.renderItem}
+                keyExtractor = {this.keyExtractor}
+            />
         )
+/*
+        return (
+            <ScrollView>
+                {this.props.events.map(event => <EventCard key={event.id} event={event}/>)}
+            </ScrollView>
+        )
+*/
     }
 }
 
