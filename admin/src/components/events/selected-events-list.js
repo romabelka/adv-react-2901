@@ -2,33 +2,59 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { List } from 'react-virtualized'
 import { selectedEventsSelector } from '../../ducks/events'
+import { TransitionMotion, spring } from 'react-motion'
 import SelectedEventCard from './selected-event-card'
 
-class SelectedEventsList extends Component {
-  static propTypes = {}
-
+class SelectedEvents extends Component {
   render() {
     return (
-      <List
-        width={400}
-        height={300}
-        rowCount={this.props.events.length}
-        rowHeight={150}
-        rowRenderer={this.rowRenderer}
-        data={this.props.events}
-      />
+      <TransitionMotion
+        styles={this.styles}
+        willEnter={this.willEnter}
+        willLeave={this.willLeave}
+      >
+        {(interpolated) => (
+          <List
+            rowCount={interpolated.length}
+            width={500}
+            height={400}
+            rowHeight={150}
+            rowRenderer={this.rowRenderer(interpolated)}
+            data={interpolated}
+          />
+        )}
+      </TransitionMotion>
     )
   }
 
-  rowRenderer = ({ index, key, style }) => (
-    <div key={key} style={style}>
-      <SelectedEventCard event={this.props.events[index]} />
-    </div>
-  )
+  willEnter = () => ({
+    opacity: 0
+  })
+
+  willLeave = () => ({
+    opacity: spring(0, { stiffness: 20, damping: 40 })
+  })
+
+  get styles() {
+    return this.props.events.map((event) => ({
+      key: event.id,
+      style: {
+        opacity: spring(1, { stiffness: 50, damping: 40 })
+      },
+      data: event
+    }))
+  }
+
+  rowRenderer = (interpolated) => ({ index, key, style }) => {
+    const rowCtx = interpolated[index]
+    return (
+      <div key={rowCtx.key} style={{ ...style, ...rowCtx.style }}>
+        <SelectedEventCard event={rowCtx.data} />
+      </div>
+    )
+  }
 }
 
-export default connect((state) => {
-  return {
-    events: selectedEventsSelector(state)
-  }
-})(SelectedEventsList)
+export default connect((state) => ({
+  events: selectedEventsSelector(state)
+}))(SelectedEvents)

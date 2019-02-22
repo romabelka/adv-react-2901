@@ -2,7 +2,9 @@ import { appName } from '../config'
 import { Record } from 'immutable'
 import { createSelector } from 'reselect'
 import { takeEvery, call, put, all, take } from 'redux-saga/effects'
+import { eventChannel } from 'redux-saga'
 import api from '../services/api'
+import { replace } from 'connected-react-router'
 
 /**
  * Constants
@@ -69,19 +71,6 @@ export const authError = createSelector(
 )
 
 /**
- * Init logic
- */
-
-export function init(store) {
-  api.onAuthStateChanged((user) => {
-    store.dispatch({
-      type: AUTH_STATE_CHANGE,
-      payload: { user }
-    })
-  })
-}
-
-/**
  * Action Creators
  * */
 export function signIn(email, password) {
@@ -143,6 +132,27 @@ export function* signUpSaga({ payload: { email, password } }) {
   }
 }
 
+const createAuthChannel = () =>
+  eventChannel((emit) => api.onAuthStateChanged((user) => emit({ user })))
+
+export const watchStatusChangeSaga = function*() {
+  const chan = yield call(createAuthChannel)
+  while (true) {
+    const { user } = yield take(chan)
+
+    yield put({
+      type: AUTH_STATE_CHANGE,
+      payload: { user }
+    })
+
+    if (!user) yield put(replace('/auth/sign-in'))
+  }
+}
+
 export function* saga() {
-  yield all([signInSaga(), takeEvery(SIGN_UP_REQUEST, signUpSaga)])
+  yield all([
+    signInSaga(),
+    takeEvery(SIGN_UP_REQUEST, signUpSaga),
+    watchStatusChangeSaga()
+  ])
 }
