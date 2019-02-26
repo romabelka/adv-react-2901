@@ -9,11 +9,8 @@ import FormValidationIndicator from "./form-validation-indivator";
 class Auth extends Component {
     static propTypes = {}
 
-    handleEmailChange = (email) => this.props.auth.email = email
-    handlePasswordChange = (password) => this.props.auth.password = password
-
     render() {
-        console.log('---', this.props.auth)
+        const { setEmail, setPassword } = this.props.auth
         return (
             <View>
                 <Text style={{fontSize: 30}}>
@@ -21,13 +18,13 @@ class Auth extends Component {
                 </Text>
                 <TextInput
                     style={styles.input}
-                    value={this.props.auth.email} onChangeText={this.handleEmailChange} keyboardType="email-address"/>
+                    value={this.props.auth.email} onChangeText={setEmail} keyboardType="email-address"/>
                 <Text>
                     Password
                 </Text>
                 <TextInput
                     style={styles.input}
-                    value={this.props.auth.password} onChangeText={this.handlePasswordChange} secureTextEntry/>
+                    value={this.props.auth.password} onChangeText={setPassword} secureTextEntry/>
                 <FormValidationIndicator/>
                 <Button title="SignIn" onPress={this.props.handleSignIn} />
             </View>
