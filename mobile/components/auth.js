@@ -1,18 +1,18 @@
 import React, {Component} from 'react'
 import {View, Text, TextInput, Button, Platform} from 'react-native'
-import {observer} from 'mobx-react'
-import stores from '../stores'
+import {observer, inject} from 'mobx-react'
 
 
+@inject('auth')
 @observer
 class Auth extends Component {
     static propTypes = {}
 
-    handleEmailChange = (email) => stores.auth.email = email
-    handlePasswordChange = (password) => stores.auth.password = password
+    handleEmailChange = (email) => this.props.auth.email = email
+    handlePasswordChange = (password) => this.props.auth.password = password
 
     render() {
-        console.log('---', stores.auth)
+        console.log('---', this.props.auth)
         return (
             <View>
                 <Text style={{fontSize: 30}}>
@@ -20,13 +20,13 @@ class Auth extends Component {
                 </Text>
                 <TextInput
                     style={styles.input}
-                    value={stores.auth.email} onChangeText={this.handleEmailChange} keyboardType="email-address"/>
+                    value={this.props.auth.email} onChangeText={this.handleEmailChange} keyboardType="email-address"/>
                 <Text>
                     Password
                 </Text>
                 <TextInput
                     style={styles.input}
-                    value={stores.auth.password} onChangeText={this.handlePasswordChange} secureTextEntry/>
+                    value={this.props.auth.password} onChangeText={this.handlePasswordChange} secureTextEntry/>
                 <Button title="SignIn" onPress={this.props.handleSignIn} />
             </View>
         )
