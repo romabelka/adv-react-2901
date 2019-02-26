@@ -3,15 +3,15 @@ import {StyleSheet} from 'react-native'
 import Event from '../events/event'
 import {events} from '../../fixtures'
 
-const eventList = Object.entries(events).map(([ id, value ]) => ({ id, ...value }))
-
 class EventScreen extends Component {
-    static propTypes = {
-
-    };
+    static navigationOptions = ({navigation}) => ({
+        title: navigation.state.params.id
+    })
 
     render() {
-        return <Event event = {eventList[0]}/>
+        const { id } = this.props.navigation.state.params
+        const event = { id, ...events[id] }
+        return <Event event = {event}/>
     }
 }
 

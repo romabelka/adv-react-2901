@@ -15,8 +15,10 @@ class EventListScreen extends Component {
     };
 
     render() {
-        return <EventList events = {eventList}/>
+        return <EventList events = {eventList} handlePress = {this.goToEvent}/>
     }
+
+    goToEvent = event => this.props.navigation.navigate('event', { id: event.id })
 }
 
 const styles = StyleSheet.create({
