@@ -11,7 +11,6 @@ class Auth extends Component {
 
     handleEmailChange = (email) => this.setState({email})
     handlePasswordChange = (password) => this.setState({password})
-    handleSignIn = () => console.log('---', this.state)
 
     render() {
         return (
@@ -28,7 +27,7 @@ class Auth extends Component {
                 <TextInput
                     style={styles.input}
                     value={this.state.password} onChangeText={this.handlePasswordChange} secureTextEntry/>
-                <Button title="SignIn" onPress={this.handleSignIn} />
+                <Button title="SignIn" onPress={this.props.handleSignIn} />
             </View>
         )
     }
