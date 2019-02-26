@@ -1,4 +1,5 @@
-import {observable, autorun} from "mobx";
+import {observable, autorun, computed} from "mobx";
+import emailValidator from 'email-validator'
 
 class AuthStore {
     constructor() {
@@ -8,6 +9,10 @@ class AuthStore {
     }
     @observable email = ''
     @observable password = ''
+
+    @computed get isValidForm() {
+        return emailValidator.validate(this.email) && this.password.length >= 8
+    }
 }
 
 export default AuthStore

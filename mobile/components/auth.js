@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {View, Text, TextInput, Button, Platform} from 'react-native'
 import {observer, inject} from 'mobx-react'
+import FormValidationIndicator from "./form-validation-indivator";
 
 
 @inject('auth')
@@ -27,6 +28,7 @@ class Auth extends Component {
                 <TextInput
                     style={styles.input}
                     value={this.props.auth.password} onChangeText={this.handlePasswordChange} secureTextEntry/>
+                <FormValidationIndicator/>
                 <Button title="SignIn" onPress={this.props.handleSignIn} />
             </View>
         )
