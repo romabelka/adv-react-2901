@@ -26,7 +26,7 @@ class Auth extends Component {
                     style={styles.input}
                     value={this.props.auth.password} onChangeText={setPassword} secureTextEntry/>
                 <FormValidationIndicator/>
-                <Button title="SignIn" onPress={this.props.handleSignIn} />
+                <Button title="SignIn" onPress={this.props.auth.signIn} />
             </View>
         )
     }

@@ -1,19 +1,29 @@
-import { createAppContainer, createStackNavigator } from 'react-navigation'
+import { createStackNavigator, createBottomTabNavigator, createAppContainer } from 'react-navigation'
 import AuthScreen from './screens/auth'
-import EventListScreen from './screens/event-list'
 import EventScreen from './screens/event'
+import EventListScreen from './screens/event-list'
+import PeopleListScreen from './screens/people-list'
 
-export default createAppContainer(createStackNavigator({
+const ListsNavigator = createBottomTabNavigator({
+    events: {
+        screen: EventListScreen
+    },
+    people: {
+        screen: PeopleListScreen
+    }
+})
+
+
+const StackNavigator = createStackNavigator({
     auth: {
         screen: AuthScreen,
-        navigationOptions: {
-            title: 'Auth'
-        }
     },
-    eventList: {
-        screen: EventListScreen
+    lists: {
+        screen: ListsNavigator
     },
     event: {
         screen: EventScreen
     }
-}))
+})
+
+export default createAppContainer(StackNavigator)
