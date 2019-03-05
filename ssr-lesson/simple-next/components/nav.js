@@ -15,19 +15,17 @@ const Nav = () => (
         <Link prefetch href="/">
           <a>Home</a>
         </Link>
+      </li>
+      <li>
         <Link prefetch href="/event?id=qwerqwer" as={`/event/qwerqwer`}>
           <a>Event</a>
         </Link>
       </li>
-      <ul>
-        {links.map(({ key, href, label }) => (
-          <li key={key}>
-            <Link href={href}>
-              <a>{label}</a>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <li>
+        <Link prefetch href="/people">
+          <a>People</a>
+        </Link>
+      </li>
     </ul>
 
     <style jsx>{`
